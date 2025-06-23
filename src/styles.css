@@ -681,7 +681,220 @@ html, body {
 .footer__copyright p {
   margin: 0;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
 
+.modal-content {
+  background: linear-gradient(#9b7e20, #774b1f);
+  border-radius: 10px;
+  border: 3px solid #c4a484;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+.modal-content:hover {
+  box-shadow: 0px 0px 20px rgba(255, 223, 186, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  font-family: var(--font-heading);
+  color: #8b4513;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.support-form {
+  padding: 0 40px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form-label {
+  display: block;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-family: 'Cinzel', serif;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 14px;
+  border: 2px solid #c4a484;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+  font-size: 18px;
+  transition: border 0.3s ease-in-out;
+  box-sizing: border-box;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #ffffffaa;
+  font-family: 'Cinzel', serif;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border: 2px solid #ffd700;
+  box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.8);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.btn {
+  width: 45%;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+  transition: all 0.3s;
+  border: none;
+}
+
+.btn--primary {
+  background: #593d1b;
+  color: white;
+}
+
+.btn--primary:hover {
+  background: #ffd700;
+  color: #593d1b;
+  transform: scale(1.05);
+  box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.8);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid #c4a484;
+}
+
+.btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+/* Estilos para el mensaje de confirmación de soporte */
+.support-success {
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  /* Agregamos una transición suave */
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.support-success .success-icon {
+  font-size: 48px;
+  color: #28a745; /* Color verde para el ícono de éxito */
+  margin-bottom: 20px;
+  border: 2px solid #28a745;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  text-align: center;
+}
+
+.support-success h3 {
+  font-size: 24px;
+  color: #F5F5DC;
+  margin-bottom: 10px;
+}
+
+.support-success p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #3B2F2F;
+}
+
+/* Animación opcional para que aparezca suavemente */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
 @media (max-width: 768px) {
   .footer {
@@ -705,4 +918,22 @@ html, body {
     margin-top: var(--spacing-md); /* Ajusta el margen en móvil */
     justify-content: center;
   }
-}
+  .modal-content {
+    margin: 10px;
+    width: calc(100% - 20px);
+          }
+
+  .support-form {
+    padding: 0 20px 40px;
+          }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+          }
+
+    .btn {
+      width: 100%;
+    }
+  }
+

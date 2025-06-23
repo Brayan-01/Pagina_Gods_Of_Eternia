@@ -143,22 +143,20 @@ export const Dropdown = ({ items, onItemSelected }) => {
       {isOpen && (
         <div
           className="dropdown-menu"
-          // Ajusta la altura del menú principal si un submenú está abierto para contenerlo
           style={{
             height: activeSubMenu
-              ? `${currentSubMenuHeight + 60}px` // El "+ 60px" es un ajuste, ver si es necesario o un cálculo más preciso.
-              : "auto", // Si no hay submenú abierto, el alto es automático
+              ? `${currentSubMenuHeight + 60}px` 
+              : "auto", 
           }}
         >
-          {/* Muestra los ítems principales si no hay submenú activo */}
           {!activeSubMenu &&
             items.map((item) => (
               <MenuItem
                 key={item.id || item.name}
                 item={item}
                 onItemClick={handleItemClick}
-                activeSubMenu={activeSubMenu} // Propagado para MenuItem
-                onToggleSubMenu={handleToggleSubMenu} // Propagado para MenuItem
+                activeSubMenu={activeSubMenu}
+                onToggleSubMenu={handleToggleSubMenu} 
               />
             ))}
           {/* Muestra el submenú activo si lo hay */}
