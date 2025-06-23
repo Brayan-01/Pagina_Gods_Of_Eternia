@@ -10,7 +10,7 @@ const About = () => {
         <li className="card-item">
           <img className="card-photo" src={brayanPhoto} alt="Foto de Brayan" />
           <h2>Brayan Penagos</h2>
-          <p>Desarrollador con enfoque en la creación de experiencias digitales fluidas y optimizadas.</p>
+          <p>¡Hola! Soy desarrollador Front-End. Me apasiona ser el puente entre el diseño creativo y la funcionalidad técnica, construyendo experiencias web que no solo se vean bien, sino que se sientan increíbles para el usuario.</p>
         </li>
         <li className="card-item">
           <img className="card-photo" src={juanPhoto} alt="Foto de Sebastián" />
