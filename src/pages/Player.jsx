@@ -40,7 +40,7 @@ const Player = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/player`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/perfil`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const Player = () => {
     const userToken = localStorage.getItem("userToken");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/player`,{
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/perfil`,{
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -155,10 +155,6 @@ const Player = () => {
     }
   };
 
-  const resetToDefaultImage = () => {
-    setProfileImage(null);
-  };
-
   if (loading) {
     return (
       <div className="profile-container">
@@ -189,8 +185,8 @@ const Player = () => {
 
         <div className="profile-image-container">
           <div className="profile-image">
-            <img 
-              src={profileImage || defaultAvatar} 
+            <img
+              src={profileImage || defaultAvatar}
               alt="Perfil del jugador"
               onError={(e) => {
                 e.target.src = defaultAvatar;
@@ -201,16 +197,7 @@ const Player = () => {
             <label className="image-upload-button" htmlFor="profileImageInput" title="Cambiar imagen">
               📷
             </label>
-            {profileImage && (
-              <button 
-                className="reset-image-button" 
-                onClick={resetToDefaultImage}
-                title="Usar imagen por defecto"
-                type="button"
-              >
-                🔄
-              </button>
-            )}
+            {/* El botón para restablecer la imagen ha sido eliminado */}
           </div>
           <input
             id="profileImageInput"
