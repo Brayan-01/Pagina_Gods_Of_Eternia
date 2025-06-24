@@ -1,7 +1,7 @@
 import "./about.css";
 import juanPhoto from "../assets/juan.jpeg";
 import ianPhoto from "../assets/ian.jpeg";
-import brayanPhoto from "../assets/brayan.webp";
+import brayanPhoto from "../assets/brayan.jpg";
 
 const About = () => {
   return (

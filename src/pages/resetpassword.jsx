@@ -88,7 +88,7 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="login-container"> {/* Reutilizamos el mismo contenedor */}
+        <div className="login-container"> 
             <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
