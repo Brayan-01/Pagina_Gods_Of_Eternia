@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 
-const footerSections = [
+function Footer() {
+  const API_URL = import.meta.env.VITE_API_URL;
+  const currentYear = new Date().getFullYear();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    nombre: '',
+    correo: '',
+    motivo: ''
+  });
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const footerSections = [
     {
       title: 'Enlaces Útiles',
       links: [
@@ -11,68 +24,78 @@ const footerSections = [
     {
       title: 'Legal',
       links: [
-        { text: 'Términos de Servicio', url: '/Terminos y Condiciones de Gods Of Eternia.pdf', isPdf: true, },
-        { text: 'Política de Privacidad', url: '/Política de Privacidad de Gods of Eternia.pdf', isPdf: true, },
+        { text: 'Términos de Servicio', url: `${API_URL}/pdfs/Terminos y Condiciones de Gods Of Eternia.pdf`, isPdf: true },
+        { text: 'Política de Privacidad', url: `${API_URL}/pdfs/Política de Privacidad de Gods of Eternia.pdf`, isPdf: true },
       ],
     },
-];
-
-function Footer() {
-  const currentYear = new Date().getFullYear();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    nombre: '',
-    correo: '',
-    motivo: ''
-  });
-
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
+  ];
 
   const handleLinkClick = (link, e) => {
-    e.preventDefault(); 
+    if (link.url) {
+        // Para los links normales, dejamos que el navegador haga su trabajo
+        return;
+    }
+    e.preventDefault();
     if (link.action === 'openSupport') {
       setIsModalOpen(true);
+      setErrorMessage('');
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría tu lógica para enviar los datos a un servidor
-    console.log('Datos del formulario:', formData);
+    setErrorMessage("");
 
-    // 1. Mostramos el mensaje de éxito
-    setShowSuccessMessage(true);
+    if (!formData.nombre || !formData.correo || !formData.motivo) {
+      setErrorMessage('Todos los campos son obligatorios.');
+      return;
+    }
+    if (!formData.correo.includes('@') || !formData.correo.includes('.')) {
+      setErrorMessage('Por favor, ingresa un correo electrónico válido.');
+      return;
+    }
 
-    setTimeout(() => {
-      setIsModalOpen(false); // Cierra el modal
-      setShowSuccessMessage(false); 
-      setFormData({ nombre: '', correo: '', motivo: '' });
-    }, 4000); 
+    try {
+      const response = await fetch(`${API_URL}/api/support`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setShowSuccessMessage(true);
+        setTimeout(() => {
+          setIsModalOpen(false);
+          setShowSuccessMessage(false);
+          setFormData({ nombre: '', correo: '', motivo: '' });
+        }, 4000);
+      } else {
+        setErrorMessage(result.error || 'Error al enviar la solicitud.');
+      }
+    } catch {
+      setErrorMessage('Error de conexión. Inténtalo de nuevo más tarde.');
+    }
   };
 
-  // ===== FUNCIÓN closeModal MODIFICADA =====
   const closeModal = () => {
     setIsModalOpen(false);
-    // Nos aseguramos de resetear el mensaje de éxito si el usuario cierra manualmente
-    setShowSuccessMessage(false); 
+    setShowSuccessMessage(false);
+    setErrorMessage('');
     setFormData({ nombre: '', correo: '', motivo: '' });
   };
 
   return (
     <div>
-      {/* El código del footer se mantiene igual */}
       <footer className="footer">
-        {/* ... tu código del footer no cambia ... */}
         <div className="footer__container">
           {footerSections.map((section) => (
             <div className="footer__column" key={section.title}>
@@ -80,7 +103,12 @@ function Footer() {
               <ul className="footer__links-list">
                 {section.links.map((link) => (
                   <li key={link.text}>
-                    <a className="footer__link" href={link.url || '#'} onClick={link.action ? (e) => handleLinkClick(link, e) : undefined} {...(link.isPdf || link.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...(link.isPdf ? { download: true } : {})}>
+                    <a
+                      className="footer__link"
+                      href={link.url || '#'}
+                      onClick={(e) => handleLinkClick(link, e)}
+                      {...(link.isPdf ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    >
                       {link.text}
                     </a>
                   </li>
@@ -94,25 +122,23 @@ function Footer() {
         </div>
       </footer>
 
-      {/* Modal de Soporte */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            { showSuccessMessage ? (
-              // Si showSuccessMessage es true, muestra este mensaje:
+            {showSuccessMessage ? (
               <div className="support-success">
                 <span className="success-icon">&#10004;</span>
                 <h3>¡Mensaje Enviado!</h3>
                 <p>Gracias por contactarnos, <strong>{formData.nombre}</strong>. Te responderemos pronto.</p>
               </div>
             ) : (
-              // Si no, muestra el formulario como antes:
               <>
                 <div className="modal-header">
                   <h2 className="modal-title">Contactar Soporte</h2>
                   <button className="modal-close" onClick={closeModal}>×</button>
                 </div>
                 <div className="support-form">
+                  {errorMessage && <p className="error-message">{errorMessage}</p>}
                   <div className="form-group">
                     <label htmlFor="nombre" className="form-label">Nombre</label>
                     <input type="text" id="nombre" name="nombre" className="form-input" value={formData.nombre} onChange={handleInputChange} required />

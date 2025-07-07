@@ -371,6 +371,39 @@ letter-spacing: 2px;
 text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 font-family: 'Cinzel', serif;
 }
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 16px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, top 0.4s ease, visibility 0.4s;
+  z-index: 9999;
+  font-weight: 500;
+}
+
+/* Clase para mostrar/ocultar */
+.notification.show {
+  top: 40px;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Colores según el tipo de mensaje */
+.notification.success {
+  background-color: #28a745; /* Verde */
+}
+.notification.error {
+  background-color: #dc3545; /* Rojo */
+}
+.notification.loading {
+  background-color: #007bff; /* Azul */
+}
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 600px) {

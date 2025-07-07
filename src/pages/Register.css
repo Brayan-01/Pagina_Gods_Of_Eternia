@@ -3,8 +3,9 @@
 .register-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start; 
+  min-height: 100vh;
+  padding: 120px 0; 
   width: 100vw;
   background: url('https://www.transparenttextures.com/patterns/old-map.png'), linear-gradient(135deg, #2b1d0f, #593d1b);
   font-family: 'MedievalSharp', cursive;
@@ -48,6 +49,11 @@ form {
   width: 100%;
 }
 
+input, .password-container {
+  box-sizing: border-box; 
+  font-family: 'MedievalSharp', serif;
+}
+
 input {
   width: 100%;
   margin: 10px 0;
@@ -59,6 +65,7 @@ input {
   outline: none;
   font-size: 18px;
   transition: border 0.3s ease-in-out;
+  font-family: 'MedievalSharp', serif;
 }
 
 input::placeholder {
@@ -106,6 +113,61 @@ input:focus {
   font-size: 20px;
   color: white;
   cursor: pointer;
+}
+.verify-container {
+  text-align: center;
+  margin-top: 25px;
+  padding: 16px;
+  background-color: rgba(10, 20, 40, 0.4); /* Fondo oscuro semitransparente, temático */
+  border-radius: 12px; /* Bordes más redondeados */
+  border-top: 1px solid rgba(138, 116, 230, 0.3); /* Borde superior con acento de color */
+  line-height: 1.6;
+}
+
+/* Estilo para el texto "¿Ya te registraste?" */
+.verify-text {
+  color: #c0c0d0; /* Un gris azulado, fácil de leer */
+  font-size: 0.95em;
+  margin-right: 8px; /* Espacio entre el texto y el botón */
+}
+
+/* Estilo del botón "Verifica tu cuenta" */
+.verify-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #9f8cff; /* Un color violeta/lavanda brillante, temático de fantasía */
+  font-family: inherit;
+  font-size: 0.95em;
+  font-weight: 700; /* Más audaz para que destaque */
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease-out;
+}
+
+/* Línea animada que aparece debajo al pasar el cursor */
+.verify-button::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #c1b6ff; /* La línea es más brillante que el texto */
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1); /* Transición suave */
+}
+
+/* Efecto al pasar el cursor sobre el botón */
+.verify-button:hover {
+  color: #d6ceff; /* El texto se hace casi blanco, más brillante */
+  background-color: transparent; /* AÑADIDO: Asegura que no haya fondo de color */
+}
+
+.verify-button:hover::after {
+  transform: scaleX(1); /* La línea aparece desde el centro */
 }
 
 button {

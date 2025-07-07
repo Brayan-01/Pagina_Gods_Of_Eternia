@@ -1,34 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Importa el hook de autenticación global
+import { useAuth } from "../context/AuthContext";
+import infoIcon from '../assets/Info.png'; // Asegúrate de que la ruta sea correcta
 
-// Componente Dropdown Simplificado (incluido en el mismo archivo para conveniencia)
-// Este componente está bien diseñado y no necesita cambios.
+// Componente Dropdown ultra simplificado, ya que no hay submenús
 const SimpleDropdown = ({ items, onItemSelected }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [openSubmenu, setOpenSubmenu] = useState(null);
   const dropdownRef = useRef(null);
 
   const handleToggle = () => setIsOpen(!isOpen);
 
   const handleItemClick = (item) => {
-    if (item.url || item.id === "cerrar") {
-      onItemSelected(item);
-      setIsOpen(false);
-      setOpenSubmenu(null);
-    }
-  };
-  
-  const handleSubmenuToggle = (e, itemId) => {
-    e.stopPropagation();
-    setOpenSubmenu(openSubmenu === itemId ? null : itemId);
+    onItemSelected(item);
+    setIsOpen(false);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
-        setOpenSubmenu(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -48,37 +38,10 @@ const SimpleDropdown = ({ items, onItemSelected }) => {
         <ul className="dropdown-menu">
           {items.map((item) => (
             <li key={item.id}>
-              {item.subItems ? (
-                <div className="dropdown-submenu-container">
-                  <button 
-                    onClick={(e) => handleSubmenuToggle(e, item.id)} 
-                    className="dropdown-submenu-toggle"
-                  >
-                    <span className="dropdown-item-content">
-                      <span className="dropdown-icon">{item.icon}</span>
-                      <span>{item.name}</span>
-                    </span>
-                    <span className={`submenu-arrow ${openSubmenu === item.id ? 'open' : ''}`}>►</span>
-                  </button>
-                  {openSubmenu === item.id && (
-                    <ul className="dropdown-submenu">
-                      {item.subItems.map((subItem) => (
-                        <li key={subItem.id}>
-                          <Link to={subItem.url} onClick={() => handleItemClick(subItem)} className="dropdown-subitem">
-                            <span className="dropdown-icon">{subItem.icon}</span>
-                            <span>{subItem.name}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ) : (
-                <button onClick={() => handleItemClick(item)} className="dropdown-item">
-                  <span className="dropdown-icon">{item.icon}</span>
-                  <span>{item.name}</span>
-                </button>
-              )}
+              <button onClick={() => handleItemClick(item)} className="dropdown-item">
+                <span className="dropdown-icon">{item.icon}</span>
+                <span>{item.name}</span>
+              </button>
             </li>
           ))}
         </ul>
@@ -86,7 +49,6 @@ const SimpleDropdown = ({ items, onItemSelected }) => {
     </div>
   );
 };
-
 
 // Componente Principal del Header
 function Header() {
@@ -100,22 +62,14 @@ function Header() {
     navigate("/login");
   };
   
+  // Array de items simplificado sin "Ajustes"
   const dropdownItems = [
     { id: "perfil", name: "Mi perfil", icon: "👤", url: "/player" },
-    { 
-      id: "ajustes", 
-      name: "Ajustes", 
-      icon: "⚙️", 
-      subItems: [
-        { id: "cuenta", name: "Cuenta", icon: "🔐", url: "/settings/account" },
-        { id: "notificaciones", name: "Notificaciones", icon: "🔔", url: "/settings/notifications" },
-      ],
-    },
     { id: "cerrar", name: "Cerrar sesión", icon: "🚪" },
   ];
 
   const handleDropdownSelect = (item) => {
-    setIsMobileMenuOpen(false); // Cierra el menú móvil si estuviera abierto
+    setIsMobileMenuOpen(false); // Cierra el menú móvil al seleccionar algo
     if (item.url) {
       navigate(item.url);
     }
@@ -155,15 +109,18 @@ function Header() {
           </Link>
         </div>
 
-        {/* --- Menú de Navegación --- */}
         <nav className={`nav ${isMobileMenuOpen ? "nav-active" : ""}`}>
           
-          {/* ✨ MENÚ PARA ESCRITORIO (con el dropdown complejo) ✨ */}
+          {/* Menú para Escritorio */}
           <ul className="desktop-nav">
             {isLoggedIn ? (
               <>
-                <li><Link to="/" className="nav-link">🏠 Inicio</Link></li>
-                <li><Link to="/about" className="nav-link">ℹ️ Acerca de</Link></li>
+                <li><Link to="/" className="nav-link">🏰 Inicio</Link></li>
+                <li>
+                  <Link to="/about" className="nav-link">
+                    <img src={infoIcon} alt="Acerca de" className="nav-icon" /> Acerca de
+                  </Link>
+                </li>
                 <li> 
                   <SimpleDropdown items={dropdownItems} onItemSelected={handleDropdownSelect} />
                 </li>
@@ -171,50 +128,43 @@ function Header() {
             ) : (
               <>
                 <li><Link to="/login" className="nav-link">🔑 Iniciar Sesión</Link></li>
-                <li><Link to="/register" className="nav-link">📝 Registrarse</Link></li>
+                <li><Link to="/register" className="nav-link">📜 Registrarse</Link></li>
               </>
             )}
           </ul>
 
-          {/* ✨ MENÚ PARA MÓVIL (simplificado, sin dropdowns anidados) ✨ */}
+          {/* Menú para Móvil */}
           <ul className="mobile-nav">
              {isLoggedIn ? (
               <>
-                <li><Link to="/" className="nav-link" onClick={toggleMobileMenu}>🏠 Inicio</Link></li>
-                <li><Link to="/about" className="nav-link" onClick={toggleMobileMenu}>ℹ️ Acerca de</Link></li>
-                {/* Expandimos los items del dropdown aquí */}
-                {dropdownItems.map(item => {
-                  if (item.subItems) {
-                    return item.subItems.map(subItem => (
-                      <li key={subItem.id}>
-                        <Link to={subItem.url} className="nav-link" onClick={toggleMobileMenu}>
-                          <span className="dropdown-icon">{subItem.icon}</span> {subItem.name}
-                        </Link>
-                      </li>
-                    ))
-                  }
-                  return (
-                    <li key={item.id}>
-                      <Link to={item.url || '#'} className="nav-link" onClick={() => {
-                          handleDropdownSelect(item);
-                          toggleMobileMenu();
-                      }}>
-                        <span className="dropdown-icon">{item.icon}</span> {item.name}
-                      </Link>
-                    </li>
-                  );
-                })}
+                <li><Link to="/" className="nav-link" onClick={toggleMobileMenu}>🏰 Inicio</Link></li>
+                <li>
+                  <Link to="/about" className="nav-link" onClick={toggleMobileMenu}>
+                    <img src={infoIcon} alt="Acerca de" className="nav-icon" /> Acerca de
+                  </Link>
+                </li>
+                {/* Mapeo simplificado, ya no necesita verificar subItems */}
+                {dropdownItems.map(item => (
+                  <li key={item.id}>
+                    <Link 
+                      to={item.url || '#'} 
+                      className="nav-link" 
+                      onClick={() => handleDropdownSelect(item)}
+                    >
+                      <span className="dropdown-icon">{item.icon}</span> {item.name}
+                    </Link>
+                  </li>
+                ))}
               </>
             ) : (
               <>
                 <li><Link to="/login" className="nav-link" onClick={toggleMobileMenu}>🔑 Iniciar Sesión</Link></li>
-                <li><Link to="/register" className="nav-link" onClick={toggleMobileMenu}>📝 Registrarse</Link></li>
+                <li><Link to="/register" className="nav-link" onClick={toggleMobileMenu}>📜 Registrarse</Link></li>
               </>
             )}
           </ul>
         </nav>
 
-        {/* --- Botón Hamburguesa --- */}
         <button
           className={`hamburger ${isMobileMenuOpen ? "active" : ""}`}
           onClick={toggleMobileMenu}
