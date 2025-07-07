@@ -1,45 +1,53 @@
-// src/context/AuthContext.jsx
-
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useContext, useEffect } from 'react';
+
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(null);
-    // 1. AÑADIMOS UN ESTADO DE CARGA
+    const [user, setUser] = useState(null); 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Comprueba el token en localStorage solo una vez al cargar la app
         const storedToken = localStorage.getItem("userToken");
         if (storedToken) {
-            setToken(storedToken);
+            try {
+                const decodedUser = jwtDecode(storedToken);
+                setUser(decodedUser);
+            } catch (error) {
+                console.error("Token inválido:", error);
+                localStorage.removeItem("userToken");
+            }
         }
-        // 2. UNA VEZ VERIFICADO, TERMINAMOS LA CARGA
-        setLoading(false); 
+        setLoading(false);
     }, []);
 
     const login = (userToken) => {
         localStorage.setItem("userToken", userToken);
-        setToken(userToken);
+        try {
+            const decodedUser = jwtDecode(userToken);
+            setUser(decodedUser); // <-- 3. Al iniciar sesión, también guardamos el usuario
+        } catch (error) {
+            console.error("Error al decodificar token en login:", error);
+            setUser(null);
+        }
     };
 
     const logout = () => {
         localStorage.removeItem("userToken");
-        setToken(null);
+        setUser(null); // <-- 4. Al cerrar sesión, limpiamos el usuario
     };
 
-    const isAuthenticated = !!token;
-
-    // 3. PASAMOS EL ESTADO 'loading' EN EL VALOR DEL CONTEXTO
     const value = {
-        isAuthenticated,
-        loading, // <-- ¡Nuevo!
+        user, // <-- 5. Exponemos el objeto 'user' completo
+        loading,
         login,
-        logout
+        logout,
+        // 'isAuthenticated' se puede deducir directamente si 'user' existe
+        isAuthenticated: !!user
     };
 
-    // No renderizamos nada hasta que la carga inicial termine
     return (
         <AuthContext.Provider value={value}>
             {!loading && children}
