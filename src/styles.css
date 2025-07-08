@@ -33,12 +33,20 @@
 
 /* Estilos Base */
 html, body {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
-  font-family: 'Montserrat', sans-serif;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url('/fondo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow-x: hidden;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.hero-section, .feature-section {
+    /* Hacemos que el fondo de AMBAS secciones sea transparente */
+    background: transparent;
 }
 
 .page-container {
@@ -59,7 +67,6 @@ html, body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: url('/fondo.jpg') no-repeat center center fixed;
   background-size: cover;
   position: relative;
   width: 100%;
@@ -221,7 +228,53 @@ html, body {
 .nav-link:hover {
   background-color: rgba(255,255,255,0.1);
 }
+/* --- Estilos para la sección de Blog --- */
 
+.feature-section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+/* El resto de los estilos se mantienen igual para el contenido y el botón */
+.feature-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.feature-content h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: #ffd700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.feature-content p {
+    font-family: 'MedievalSharp', cursive;
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.feature-button {
+    background: transparent;
+    border: 2px solid #ffd700;
+    color: #ffd700;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-family: 'Cinzel', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.feature-button:hover {
+    background: #ffd700;
+    color: #1a1a1a;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    transform: translateY(-3px);
+}
 .nav-icon {
   width: 20px; /* Ancho del ícono */
   height: 20px; /* Alto del ícono */
@@ -588,7 +641,8 @@ html, body {
 }
 
 /* Play Button */
-.play-button {
+.play-button,
+.feature-button {
   background: linear-gradient(to right, #c4a484, #ffd700);
   color: #2b1d0f;
   font-family: 'Cinzel', serif;
@@ -604,7 +658,8 @@ html, body {
   display: inline-block;
 }
 
-.play-button:hover {
+.play-button:hover,
+.feature-button:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }

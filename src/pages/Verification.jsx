@@ -32,10 +32,11 @@ const Verification = ({ prefilledEmail = "" }) => {
             // CAMBIO: Usamos la variable API_URL
             const response = await fetch(`${API_URL}/verificar`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, codigo: code }),
+                headers: { "Content-Type": "application/json" },
+                // AJUSTE CLAVE AQUÍ:
+                body: JSON.stringify({ 
+                    codigo_verificacion: code // Cambia 'codigo' por 'codigo_verificacion' y elimina el email
+                }),
             });
 
             const data = await response.json();

@@ -58,9 +58,9 @@ const Login = () => {
 
             const data = await response.json();
 
-            if (response.ok && data.token) {
-                login(data.token);
-                navigate("/");
+            if (response.ok && data.access_token) {
+                login(data.access_token);
+                navigate("/player"); // Mejorado: Redirige al perfil del jugador después de iniciar sesión
             } else {
                 setError(data.error || "Error al iniciar sesión");
             }

@@ -1,8 +1,7 @@
-// Comment.jsx
 import React from 'react';
 
 const Comment = ({ comment, currentUser, onDelete, onEdit }) => {
-    const isOwner = currentUser === comment.author;
+    const isOwner = currentUser && currentUser === comment.author;
 
     return (
         <div className="comment">

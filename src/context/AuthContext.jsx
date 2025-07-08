@@ -1,51 +1,68 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useContext, useEffect } from 'react';
-
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null); 
+    // CAMBIO CLAVE: Usamos 'token' como nombre de estado para consistencia.
+    // Se inicializa desde localStorage con la clave correcta "token".
+    const [token, setToken] = useState(() => localStorage.getItem("token"));
+    const [user, setUser] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("userToken");
-        if (storedToken) {
+        setLoading(true);
+        if (token) {
             try {
-                const decodedUser = jwtDecode(storedToken);
-                setUser(decodedUser);
-            } catch (error) {
-                console.error("Token inválido:", error);
-                localStorage.removeItem("userToken");
-            }
-        }
-        setLoading(false);
-    }, []);
+                const decodedUser = jwtDecode(token);
+                const isExpired = decodedUser.exp * 1000 < Date.now();
 
-    const login = (userToken) => {
-        localStorage.setItem("userToken", userToken);
-        try {
-            const decodedUser = jwtDecode(userToken);
-            setUser(decodedUser); // <-- 3. Al iniciar sesión, también guardamos el usuario
-        } catch (error) {
-            console.error("Error al decodificar token en login:", error);
+                if (isExpired) {
+                    // Si el token ha expirado, cerramos la sesión.
+                    logout();
+                } else {
+                    // Si el token es válido, establecemos el usuario y el estado de autenticación.
+                    setUser({
+                        id: decodedUser.sub, // 'sub' es el ID de usuario estándar en JWT
+                        username: decodedUser.username,
+                        email: decodedUser.email
+                    });
+                    setIsAuthenticated(true);
+                }
+            } catch (error) {
+                console.error("Token en localStorage es inválido:", error);
+                logout(); // Limpia el token inválido.
+            }
+        } else {
+            // Si no hay token, nos aseguramos de que no haya sesión activa.
+            setIsAuthenticated(false);
             setUser(null);
         }
+        setLoading(false);
+    }, [token]); // Este efecto se ejecuta cada vez que el token cambia.
+
+    const login = (newToken) => {
+        // CAMBIO CLAVE: Se guarda en localStorage con la clave "token".
+        localStorage.setItem("token", newToken);
+        setToken(newToken); // Actualiza el estado, lo que dispara el useEffect de arriba.
     };
 
     const logout = () => {
-        localStorage.removeItem("userToken");
-        setUser(null); // <-- 4. Al cerrar sesión, limpiamos el usuario
+        // CAMBIO CLAVE: Se elimina la clave "token" de localStorage.
+        localStorage.removeItem("token");
+        setToken(null);
     };
 
+    // El valor que se comparte con toda la aplicación.
     const value = {
-        user, // <-- 5. Exponemos el objeto 'user' completo
+        token, // <--- CAMBIO CLAVE: Exponemos el token para las llamadas a la API.
+        user,
+        isAuthenticated,
         loading,
         login,
         logout,
-        // 'isAuthenticated' se puede deducir directamente si 'user' existe
-        isAuthenticated: !!user
     };
 
     return (

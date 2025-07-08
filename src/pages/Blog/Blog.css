@@ -11,30 +11,70 @@ body {
     font-family: "MedievalSharp", cursive;
     background: url("https://www.transparenttextures.com/patterns/old-map.png"),
         linear-gradient(135deg, #2b1d0f, #593d1b);
+    color: #f0f0f0; /* Color de texto base para mejor legibilidad */
 }
 
-/* Contenedor principal del blog */
+/* --- Contenedor Principal del Blog --- */
 .blog-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 40px;
     min-height: 100vh;
     width: 100%;
     padding: 20px;
     padding-top: 100px;
 }
 
-/* Estilos para la creación de posts y cada post individual */
+/* --- Encabezado del Blog --- */
+.blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    color: white;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #c4a484;
+}
+
+.blog-header h1 {
+    font-family: "Cinzel", serif;
+    font-size: 42px;
+    margin: 0;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* --- Botón para Crear Post --- */
+.create-new-post-button {
+    padding: 12px 25px;
+    font-family: "Cinzel", serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    background: #593d1b;
+    border: 2px solid #ffd700;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.create-new-post-button:hover {
+    background: #ffd700;
+    color: #2b1d0f;
+    transform: scale(1.05);
+}
+
+/* --- Estilos para Cajas de Contenido (Crear y Ver Post) --- */
 .blog-post,
 .create-post-container {
-    background: linear-gradient(#9b7e20, #774b1f);
+    background: linear-gradient(rgba(155, 126, 32, 0.9), rgba(119, 75, 31, 0.9));
     padding: 30px 40px;
     border-radius: 10px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.5);
     width: 100%;
     max-width: 800px;
     border: 3px solid #c4a484;
-    margin-bottom: 40px;
 }
 
 .blog-post h2,
@@ -42,10 +82,150 @@ body {
     color: white;
     font-size: 32px;
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
     font-family: "Cinzel", serif;
+    text-align: center;
+    border-bottom: 1px solid rgba(196, 164, 132, 0.5);
+    padding-bottom: 15px;
 }
+
+/* === ESTILOS MEJORADOS PARA EL FORMULARIO DE CREACIÓN/EDICIÓN === */
+
+.create-post-container {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    color: #ffd700; /* Dorado para destacar */
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-family: "Cinzel", serif;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.input-group input[type="text"],
+.input-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #c4a484;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #f0f0f0;
+    font-size: 16px;
+    font-family: "MedievalSharp", cursive;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group input[type="text"]:focus,
+.input-group textarea:focus {
+    border-color: #ffd700;
+    outline: none;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+.image-upload-label {
+    background: #593d1b;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 2px solid #ffd700;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-family: "Cinzel", serif;
+    display: inline-block;
+    text-align: center;
+}
+
+.image-upload-label:hover {
+    background: #ffd700;
+    color: #2b1d0f;
+}
+
+#imageUpload {
+    display: none;
+}
+
+.image-recommendation {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 10px;
+}
+
+.image-preview {
+    max-width: 250px;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: 2px solid #c4a484;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    border-top: 1px solid rgba(196, 164, 132, 0.5);
+    padding-top: 25px;
+}
+
+.save-button,
+.cancel-button {
+    padding: 12px 30px;
+    border-radius: 5px;
+    font-family: "Cinzel", serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.save-button {
+    background: #ffd700;
+    color: #2b1d0f;
+    border: 2px solid #ffd700;
+}
+
+.save-button:hover {
+    background: #593d1b;
+    color: #ffd700;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.cancel-button {
+    background: transparent;
+    color: #f0f0f0;
+    border: 2px solid #c4a484;
+}
+
+.cancel-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #f0f0f0;
+}
+
+
+/* --- Estilos para Posts Individuales y Comentarios --- */
+/* (El resto de tu CSS original a partir de aquí) */
 
 .post-meta {
     color: rgba(255, 255, 255, 0.8);
@@ -71,7 +251,6 @@ body {
     margin-bottom: 25px;
 }
 
-/* Controles del Post (Like, Editar, Borrar) */
 .post-controls {
     display: flex;
     align-items: center;
@@ -115,7 +294,6 @@ body {
     box-shadow: 0 0 10px rgba(220, 53, 69, 0.6);
 }
 
-/* Sección de Comentarios */
 .comments-section {
     margin-top: 30px;
 }
@@ -168,7 +346,6 @@ body {
     color: #ffd700;
 }
 
-/* Formulario para añadir comentario */
 .add-comment-form {
     display: flex;
     gap: 10px;
@@ -202,107 +379,6 @@ body {
     color: #593d1b;
 }
 
-/* Estilos para el formulario de creación/edición de posts */
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-group label {
-    display: block;
-    color: white;
-    margin-bottom: 8px;
-    font-size: 18px;
-    font-family: "Cinzel", serif;
-}
-
-.input-group input,
-.input-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #c4a484;
-    border-radius: 5px;
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
-    font-size: 16px;
-    font-family: "MedievalSharp", cursive;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.input-group input:focus,
-.input-group textarea:focus {
-    border-color: #ffd700;
-    outline: none;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-}
-
-.image-upload-label {
-    background: #593d1b;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    border: 2px solid #ffd700;
-    transition: all 0.3s ease;
-    font-size: 16px;
-    font-family: "Cinzel", serif;
-    display: inline-block;
-    text-align: center;
-}
-
-.image-upload-label:hover {
-    background: #ffd700;
-    color: #593d1b;
-}
-
-#imageUpload {
-    display: none;
-}
-
-
-.image-recommendation {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-top: 10px;
-    margin-bottom: 0;
-    text-align: left;
-}
-
-.image-preview {
-    max-width: 200px;
-    margin-top: 15px;
-    border-radius: 5px;
-    border: 1px solid #c4a484;
-}
-
-.button-group {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 25px;
-}
-
-.save-button,
-.cancel-button {
-    padding: 12px 25px;
-    border-radius: 5px;
-    font-family: "Cinzel", serif;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.save-button {
-    background: #593d1b;
-    color: white;
-    border: 2px solid #ffd700;
-}
-
-.save-button:hover {
-    background: #ffd700;
-    color: #593d1b;
-    transform: scale(1.05);
-}
-
 .notification {
     position: fixed;
     top: 20px;
@@ -320,25 +396,47 @@ body {
     font-weight: 500;
 }
 
-/* Clase para mostrar/ocultar */
 .notification.show {
     top: 40px;
     opacity: 1;
     visibility: visible;
 }
 
-/* Colores según el tipo de mensaje */
 .notification.success {
     background-color: #28a745;
-    /* Verde */
 }
 
 .notification.error {
     background-color: #dc3545;
-    /* Rojo */
 }
 
 .notification.loading {
     background-color: #007bff;
-    /* Azul */
+}
+
+
+.create-post-modal-overlay {
+    position: fixed; /* Se posiciona sobre toda la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Se asegura de que esté por encima de todo */
+    padding: 20px;
+}
+
+.create-post-modal-content {
+    width: 100%;
+    max-width: 800px; /* Ancho máximo igual al de los posts */
+    max-height: 90vh; /* Altura máxima para que no ocupe toda la pantalla en alto */
+    overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+}
+
+/* Reutilizamos el estilo que ya creamos para el formulario */
+.create-post-modal-content .create-post-container {
+    margin-bottom: 0; /* Quitamos el margen inferior que no es necesario en el modal */
 }
