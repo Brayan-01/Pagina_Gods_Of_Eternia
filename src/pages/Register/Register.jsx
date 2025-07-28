@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import Verification from "./Verification";
+import Verification from "../Verification/Verification";
 import "./Register.css";
 
 const Register = () => {

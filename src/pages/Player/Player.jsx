@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import "./Player.css";
-import knightAvatar from '../assets/knight.png';
+import knightAvatar from '../../assets/knight.png'
 
 const Player = () => {
     useEffect(() => {
@@ -84,7 +85,7 @@ const Player = () => {
         } finally {
             setLoading(false);
         }
-    }, [token, navigate, logout, API_URL]);
+    }, [token, navigate, logout, API_URL, defaultAvatar]);
 
     // Llama a fetchProfileData cuando el componente se monta
     useEffect(() => {

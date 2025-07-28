@@ -3,7 +3,7 @@ import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import "./loginpage.css";
 
 const Login = () => {

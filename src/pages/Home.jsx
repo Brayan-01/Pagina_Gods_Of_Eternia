@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
-import Leaderboard from "../pages/Leaderboard"; 
+import Leaderboard from "../pages/Leaderboard/Leaderboard"; 
 import Footer from "../components/Footer";
 
 function Home() {
