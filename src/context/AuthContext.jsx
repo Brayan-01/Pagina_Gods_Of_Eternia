@@ -5,7 +5,6 @@ import { jwtDecode } from 'jwt-decode';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    // CAMBIO CLAVE: Usamos 'token' como nombre de estado para consistencia.
     // Se inicializa desde localStorage con la clave correcta "token".
     const [token, setToken] = useState(() => localStorage.getItem("token"));
     const [user, setUser] = useState(null);

@@ -2,15 +2,14 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute'; // Asegúrate de crear este archivo
+import ProtectedRoute from './components/ProtectedRoute'; 
 
-// Importa tus páginas
 import Header from './components/Header';
 import Home from './pages/Home';
-import Login from './pages/loginpage';
-import Register from './pages/Register';
-import Verification from './pages/Verification'; // Página de verificación
-import Player from './pages/Player'; 
+import Login from './pages/Login/loginpage';
+import Register from './pages/Register/Register';
+import Verification from './pages/Verification/Verification'; // Página de verificación
+import Player from './pages/Player/Player'; 
 import BlogPage from './pages/Blog/BlogPage'; // Página del blog
 
 const App = () => {
