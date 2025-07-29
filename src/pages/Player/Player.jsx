@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react"; // 1. Importar useRef
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Player.css";
@@ -29,13 +29,19 @@ const Player = () => {
     });
     const [error, setError] = useState(null);
     const [notification, setNotification] = useState({ message: '', type: '' });
+    
+    // 2. Nuevo estado para controlar la visibilidad del modal de opciones de imagen
+    const [showImageOptions, setShowImageOptions] = useState(false);
+
+    // 3. Referencias para los inputs de archivo (galería y cámara)
+    const fileInputRef = useRef(null);
+    const cameraInputRef = useRef(null);
 
     const defaultAvatar = knightAvatar;
     const API_URL = import.meta.env.VITE_API_URL;
 
     // --- LÓGICA DE LA APLICACIÓN (FUNCIONES) ---
 
-    // Efecto para las notificaciones temporales
     useEffect(() => {
         if (notification.message && notification.type !== 'loading') {
             const timer = setTimeout(() => setNotification({ message: '', type: '' }), 3000);
@@ -43,7 +49,6 @@ const Player = () => {
         }
     }, [notification]);
 
-    // Función para obtener los datos del perfil desde el backend
     const fetchProfileData = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -87,7 +92,6 @@ const Player = () => {
         }
     }, [token, navigate, logout, API_URL, defaultAvatar]);
 
-    // Llama a fetchProfileData cuando el componente se monta
     useEffect(() => {
         fetchProfileData();
     }, [fetchProfileData]);
@@ -135,6 +139,21 @@ const Player = () => {
         reader.readAsDataURL(file);
         handleImageUpload(file);
         setError(null);
+    };
+
+    // 4. Nuevas funciones para manejar las opciones de imagen
+    const handleProfileImageClick = () => {
+        setShowImageOptions(true);
+    };
+
+    const handleSelectFromGallery = () => {
+        setShowImageOptions(false);
+        fileInputRef.current.click(); // Activa el input de la galería
+    };
+
+    const handleTakePhoto = () => {
+        setShowImageOptions(false);
+        cameraInputRef.current.click(); // Activa el input de la cámara
     };
 
     const handleEdit = () => setEditing(true);
@@ -193,6 +212,19 @@ const Player = () => {
             <div className={`notification ${notification.type} ${notification.message ? 'show' : ''}`}>
                 {notification.message}
             </div>
+
+            {/* 5. Renderizado del Modal de Opciones de Imagen */}
+            {showImageOptions && (
+                <div className="image-options-modal-overlay" onClick={() => setShowImageOptions(false)}>
+                    <div className="image-options-modal" onClick={(e) => e.stopPropagation()}>
+                        <h3>Cambiar Foto de Perfil</h3>
+                        <button className="modal-button" onClick={handleTakePhoto}>📸 Tomar Foto</button>
+                        <button className="modal-button" onClick={handleSelectFromGallery}>🖼️ Elegir de la Galería</button>
+                        <button className="modal-button cancel" onClick={() => setShowImageOptions(false)}>Cancelar</button>
+                    </div>
+                </div>
+            )}
+
             <div className="profile-container">
                 {error && !profileData.username ? (
                     <div className="profile-box">
@@ -205,11 +237,7 @@ const Player = () => {
                     <div className="profile-box">
                         <h2>Perfil del Héroe</h2>
                         {error && <div className="error-message">{error}</div>}
-
-                        {/* Contenedor principal para el layout de dos columnas */}
                         <div className="profile-main-content">
-                            
-                            {/* --- Columna Izquierda: Imagen --- */}
                             <div className="profile-image-container">
                                 <img
                                     src={profileImage || defaultAvatar}
@@ -217,76 +245,85 @@ const Player = () => {
                                     className="profile-image"
                                     onError={(e) => { e.target.src = defaultAvatar; }}
                                 />
-                                <label className="image-upload-button" htmlFor="profileImageInput" title="Cambiar imagen">
+                                {/* 6. El botón ahora abre el modal en lugar de activar el input directamente */}
+                                <div className="image-upload-button" onClick={handleProfileImageClick} title="Cambiar imagen">
                                     📷
-                                </label>
+                                </div>
+                                
+                                {/* 7. Inputs de archivo ocultos */}
                                 <input
-                                    id="profileImageInput"
+                                    ref={fileInputRef}
                                     type="file"
                                     accept="image/*"
                                     onChange={handleImageChange}
                                     style={{ display: "none" }}
                                 />
+                                <input
+                                    ref={cameraInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    capture="user" // Pide usar la cámara frontal
+                                    onChange={handleImageChange}
+                                    style={{ display: "none" }}
+                                />
                             </div>
 
-                            {/* --- Columna Derecha: Detalles --- */}
                             <div className="profile-details">
-                                {editing ? (
-                                    // --- Vista de Edición ---
-                                    <div className="profile-edit">
-                                        <div className="input-group">
-                                            <label htmlFor="usernameEdit">Nombre de héroe:</label>
-                                            <input
-                                                id="usernameEdit" type="text" name="username"
-                                                value={editedData.username} onChange={handleChange} maxLength={20}
-                                            />
+                            {/* ... (el resto del JSX no cambia) ... */}
+                            {editing ? (
+                                <div className="profile-edit">
+                                    <div className="input-group">
+                                        <label htmlFor="usernameEdit">Nombre de héroe:</label>
+                                        <input
+                                            id="usernameEdit" type="text" name="username"
+                                            value={editedData.username} onChange={handleChange} maxLength={20}
+                                        />
+                                    </div>
+                                    <div className="input-group">
+                                        <label htmlFor="descriptionEdit">Descripción:</label>
+                                        <textarea
+                                            id="descriptionEdit" name="descripcion"
+                                            value={editedData.descripcion} onChange={handleChange}
+                                            maxLength={200} rows={4}
+                                            placeholder="Describe tu historia como héroe..."
+                                        />
+                                        <div className="char-counter">{editedData.descripcion?.length || 0}/200</div>
+                                    </div>
+                                    <div className="button-group">
+                                        <button className="save-button" onClick={handleSave} disabled={loading}>
+                                            {loading ? 'Guardando...' : '💾 Guardar'}
+                                        </button>
+                                        <button className="cancel-button" onClick={handleCancel} disabled={loading}>
+                                            ❌ Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="profile-info">
+                                    <div className="username-section">
+                                        <h3>{profileData.username || (user && user.username) || "Héroe Anónimo"}</h3>
+                                        <button className="edit-button" onClick={handleEdit} title="Editar perfil">✏️</button>
+                                    </div>
+                                    <div className="description">
+                                        <p>{profileData.descripcion}</p>
+                                    </div>
+                                    {profileData.email && <div className="email-info">📧 {profileData.email}</div>}
+                                    <div className="stats">
+                                        <div className="stat">
+                                            <span className="stat-label">Nivel</span>
+                                            <span className="stat-value">5</span>
                                         </div>
-                                        <div className="input-group">
-                                            <label htmlFor="descriptionEdit">Descripción:</label>
-                                            <textarea
-                                                id="descriptionEdit" name="descripcion"
-                                                value={editedData.descripcion} onChange={handleChange}
-                                                maxLength={200} rows={4}
-                                                placeholder="Describe tu historia como héroe..."
-                                            />
-                                            <div className="char-counter">{editedData.descripcion?.length || 0}/200</div>
+                                        <div className="stat">
+                                            <span className="stat-label">Victorias</span>
+                                            <span className="stat-value">12</span>
                                         </div>
-                                        <div className="button-group">
-                                            <button className="save-button" onClick={handleSave} disabled={loading}>
-                                                {loading ? 'Guardando...' : '💾 Guardar'}
-                                            </button>
-                                            <button className="cancel-button" onClick={handleCancel} disabled={loading}>
-                                                ❌ Cancelar
-                                            </button>
+                                        <div className="stat">
+                                            <span className="stat-label">Insignias</span>
+                                            <span className="stat-value">Dragones del Alba</span>
                                         </div>
                                     </div>
-                                ) : (
-                                    // --- Vista de Información ---
-                                    <div className="profile-info">
-                                        <div className="username-section">
-                                            <h3>{profileData.username || (user && user.username) || "Héroe Anónimo"}</h3>
-                                            <button className="edit-button" onClick={handleEdit} title="Editar perfil">✏️</button>
-                                        </div>
-                                        <div className="description">
-                                            <p>{profileData.descripcion}</p>
-                                        </div>
-                                        {profileData.email && <div className="email-info">📧 {profileData.email}</div>}
-                                        <div className="stats">
-                                            <div className="stat">
-                                                <span className="stat-label">Nivel</span>
-                                                <span className="stat-value">5</span>
-                                            </div>
-                                            <div className="stat">
-                                                <span className="stat-label">Victorias</span>
-                                                <span className="stat-value">12</span>
-                                            </div>
-                                            <div className="stat">
-                                                <span className="stat-label">Insignias</span>
-                                                <span className="stat-value">Dragones del Alba</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                                </div>
+                            )}
                             </div>
                         </div>
                     </div>

@@ -40,7 +40,15 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError("");
+        setError(""); // Limpia errores anteriores
+
+        // --- VALIDACIÓN DE CORREO PERSONALIZADA ---
+        if (!email || !email.includes('@')) {
+            setError("Por favor, ingresa un correo electrónico válido.");
+            return; // Detiene el proceso si el correo no es válido
+        }
+        // --- FIN DE LA VALIDACIÓN ---
+
         setIsLoginLoading(true);
 
         if (!API_URL) {
@@ -60,7 +68,7 @@ const Login = () => {
 
             if (response.ok && data.access_token) {
                 login(data.access_token);
-                navigate("/player"); // Mejorado: Redirige al perfil del jugador después de iniciar sesión
+                navigate("/player"); 
             } else {
                 setError(data.error || "Error al iniciar sesión");
             }
@@ -76,7 +84,6 @@ const Login = () => {
         setIsResetLoading(true);
         setResetError("");
         setResetMessage("");
-
         try {
             const data = await apiFunction();
             onSuccess(data);
@@ -112,6 +119,15 @@ const Login = () => {
 
     const handleRequestCode = (e) => {
         e.preventDefault();
+        setResetError(""); // Limpia errores anteriores
+
+        // --- VALIDACIÓN DE CORREO PERSONALIZADA (PARA EL MODAL) ---
+        if (!resetEmail || !resetEmail.includes('@')) {
+            setResetError("Por favor, ingresa un correo electrónico válido.");
+            return; // Detiene el proceso si el correo no es válido
+        }
+        // --- FIN DE LA VALIDACIÓN ---
+
         const apiFunction = async () => {
             const response = await fetch(`${API_URL}/forgot_password`, {
                 method: "POST",
@@ -123,14 +139,12 @@ const Login = () => {
             return data;
         };
 
-        // QUÉ HACER EN CASO DE ÉXITO (esto faltaba)
         const onSuccess = () => {
-            setResetStep('enterCode'); // <-- La línea clave para cambiar de vista
+            setResetStep('enterCode');
         };
         
         const onError = (error) => error.error || "Error al enviar el correo.";
 
-        // Llamada correcta a la función con los 3 parámetros
         handleApiCall(apiFunction, onSuccess, onError);
     };
 
@@ -173,6 +187,7 @@ const Login = () => {
         handleApiCall(apiFunction, onSuccess, onError);
     };
 
+    // --- El JSX para renderizar no cambia, se deja igual ---
     return (
         <div className="login-container">
             <motion.div
@@ -183,7 +198,7 @@ const Login = () => {
             >
                 <h2>Iniciar Sesión</h2>
                 {error && <p className="error-message">{error}</p>}
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleLogin} noValidate>
                     <div className="password-container">
                         <input
                             type="email"
@@ -244,7 +259,7 @@ const Login = () => {
                                 {resetError && <p className="error-message">{resetError}</p>}
                                 
                                 {resetStep === 'enterEmail' ? (
-                                    <form onSubmit={handleRequestCode}>
+                                    <form onSubmit={handleRequestCode} noValidate>
                                         <p>Ingresa tu correo y te enviaremos un código para restablecer tu contraseña.</p>
                                         <div className="password-container">
                                             <input
