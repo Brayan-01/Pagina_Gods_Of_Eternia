@@ -282,7 +282,7 @@
 }
 
 .image-options-modal {
-    background: #1e1e3f; /* Un fondo oscuro temático */
+    background: linear-gradient(#9b7e20, #774b1f);
     padding: 2rem;
     border-radius: 10px;
     border: 1px solid #c0a062; /* Borde dorado */

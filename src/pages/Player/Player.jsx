@@ -267,9 +267,7 @@ const Player = () => {
                                     style={{ display: "none" }}
                                 />
                             </div>
-
                             <div className="profile-details">
-                            {/* ... (el resto del JSX no cambia) ... */}
                             {editing ? (
                                 <div className="profile-edit">
                                     <div className="input-group">
