@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { jwtDecode } from "jwt-decode"; // <-- ¡IMPORTANTE! Asegúrate de tener esta importación
 import "./loginpage.css";
 
 const Login = () => {
@@ -21,7 +22,7 @@ const Login = () => {
     // Estados del modal de recuperación
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [resetEmail, setResetEmail] = useState("");
-    const [resetMessage, setResetMessage] = useState("");
+    const [resetMessage, setResetEmailMessage] = useState(""); // Renombrado para claridad
     const [resetError, setResetError] = useState("");
     const [isResetLoading, setIsResetLoading] = useState(false);
 
@@ -66,11 +67,24 @@ const Login = () => {
 
             const data = await response.json();
 
-            if (response.ok && data.access_token) {
-                login(data.access_token);
-                navigate("/player"); 
+            // *** ESTA ES LA PARTE CLAVE MODIFICADA ***
+            if (response.ok && data.access_token && data.refresh_token) {
+                // Decodifica el access_token para obtener la información del usuario
+                const decodedUser = jwtDecode(data.access_token);
+                
+                // Construye el objeto de datos de usuario para el contexto
+                const userData = {
+                    id: decodedUser.sub, // 'sub' es el ID de usuario estándar en JWT
+                    username: data.username || decodedUser.username, // Usa el username si viene en la respuesta, si no del token
+                    email: decodedUser.email // El email debería estar en el payload del token
+                };
+
+                // Llama a la función login del AuthContext con AMBOS tokens y los datos del usuario
+                login(data.access_token, data.refresh_token, userData);
+                
+                navigate("/player"); // Redirige al usuario
             } else {
-                setError(data.error || "Error al iniciar sesión");
+                setError(data.msg || "Error al iniciar sesión"); // Usar 'msg' del backend
             }
         } catch (err) {
             console.error("Error al conectar con el servidor de login:", err);
@@ -83,7 +97,7 @@ const Login = () => {
     const handleApiCall = async (apiFunction, onSuccess, onError) => {
         setIsResetLoading(true);
         setResetError("");
-        setResetMessage("");
+        setResetEmailMessage("");
         try {
             const data = await apiFunction();
             onSuccess(data);
@@ -99,7 +113,7 @@ const Login = () => {
     const resetModalStates = () => {
         setResetEmail("");
         setResetError("");
-        setResetMessage("");
+        setResetEmailMessage("");
         setResetStep('enterEmail');
         setResetCode("");
         setNewPassword("");
@@ -141,6 +155,7 @@ const Login = () => {
 
         const onSuccess = () => {
             setResetStep('enterCode');
+            setResetEmailMessage("Se ha enviado un código a tu correo.");
         };
         
         const onError = (error) => error.error || "Error al enviar el correo.";
@@ -160,6 +175,10 @@ const Login = () => {
             setResetError("El código de verificación debe tener 6 dígitos.");
             return;
         }
+        if (!newPassword) { // Añadir validación simple para que la nueva contraseña no esté vacía
+            setResetError("La nueva contraseña no puede estar vacía.");
+            return;
+        }
 
         const apiFunction = async () => {
             const response = await fetch(`${API_URL}/reset_password`, {
@@ -176,7 +195,7 @@ const Login = () => {
         };
 
         const onSuccess = (data) => {
-            setResetMessage(data.message || "¡Contraseña actualizada con éxito!");
+            setResetEmailMessage(data.message || "¡Contraseña actualizada con éxito!");
             setTimeout(() => {
                 closeForgotPasswordModal();
             }, 2000);
@@ -187,7 +206,6 @@ const Login = () => {
         handleApiCall(apiFunction, onSuccess, onError);
     };
 
-    // --- El JSX para renderizar no cambia, se deja igual ---
     return (
         <div className="login-container">
             <motion.div

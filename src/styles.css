@@ -38,7 +38,7 @@ html, body {
     display: flex;
     flex-direction: column;
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-                url('/fondo.jpg') no-repeat center center fixed;
+    url('/fondo.jpg') no-repeat center center fixed;
     background-size: cover;
     overflow-x: hidden;
     font-family: 'Montserrat', sans-serif;

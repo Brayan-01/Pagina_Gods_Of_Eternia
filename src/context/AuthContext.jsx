@@ -1,72 +1,140 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    // Se inicializa desde localStorage con la clave correcta "token".
-    const [token, setToken] = useState(() => localStorage.getItem("token"));
+    // Inicializar los tokens desde localStorage
+    const [accessToken, setAccessToken] = useState(() => localStorage.getItem("access_token"));
+    const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem("refresh_token"));
+    
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
+    // Asegúrate de que esta variable de entorno esté configurada en tu archivo .env
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    // Función para refrescar el token de acceso
+    const refreshAccessToken = useCallback(async () => {
+        if (!refreshToken) {
+            console.warn("No hay refresh token disponible para refrescar.");
+            logout(); // Si no hay refresh token, cerrar sesión
+            return false;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${refreshToken}` // Usar el refresh token aquí
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem("access_token", data.access_token);
+                setAccessToken(data.access_token);
+                console.log("Access token refrescado exitosamente.");
+                return true;
+            } else {
+                console.error("Fallo al refrescar token:", await response.json());
+                logout(); // Si el refresh token falla, cerrar sesión
+                return false;
+            }
+        } catch (error) {
+            console.error("Error de red al refrescar token:", error);
+            logout(); // Si hay error de red, cerrar sesión
+            return false;
+        }
+    }, [refreshToken, API_URL]);
+
+    // Efecto principal para verificar la autenticación
     useEffect(() => {
         setLoading(true);
-        if (token) {
-            try {
-                const decodedUser = jwtDecode(token);
-                const isExpired = decodedUser.exp * 1000 < Date.now();
+        const checkAuth = async () => {
+            if (accessToken) {
+                try {
+                    const decodedUser = jwtDecode(accessToken);
+                    const isAccessTokenExpired = decodedUser.exp * 1000 < Date.now();
 
-                if (isExpired) {
-                    // Si el token ha expirado, cerramos la sesión.
-                    logout();
-                } else {
-                    // Si el token es válido, establecemos el usuario y el estado de autenticación.
-                    setUser({
-                        id: decodedUser.sub, // 'sub' es el ID de usuario estándar en JWT
-                        username: decodedUser.username,
-                        email: decodedUser.email
-                    });
-                    setIsAuthenticated(true);
+                    if (isAccessTokenExpired) {
+                        console.log("Access token expirado. Intentando refrescar...");
+                        const refreshed = await refreshAccessToken();
+                        if (refreshed) {
+                            // Si se refrescó, el useEffect se re-ejecutará con el nuevo accessToken
+                            // así que simplemente salimos de esta ejecución.
+                            return; 
+                        } else {
+                            // Si no se pudo refrescar, logout ya fue llamado.
+                            setLoading(false);
+                            return;
+                        }
+                    } else {
+                        // Access token válido
+                        setUser({
+                            id: decodedUser.sub, 
+                            username: decodedUser.username,
+                            email: decodedUser.email
+                        });
+                        setIsAuthenticated(true);
+                        console.log("Usuario autenticado con access token válido.");
+                    }
+                } catch (error) {
+                    console.error("Error al decodificar access token:", error);
+                    logout(); // Limpiar tokens inválidos.
                 }
-            } catch (error) {
-                console.error("Token en localStorage es inválido:", error);
-                logout(); // Limpia el token inválido.
+            } else {
+                // Si no hay access token, no estamos autenticados.
+                setIsAuthenticated(false);
+                setUser(null);
+                console.log("No access token. Usuario no autenticado.");
             }
-        } else {
-            // Si no hay token, nos aseguramos de que no haya sesión activa.
-            setIsAuthenticated(false);
-            setUser(null);
-        }
-        setLoading(false);
-    }, [token]); // Este efecto se ejecuta cada vez que el token cambia.
+            setLoading(false);
+        };
 
-    const login = (newToken) => {
-        // CAMBIO CLAVE: Se guarda en localStorage con la clave "token".
-        localStorage.setItem("token", newToken);
-        setToken(newToken); // Actualiza el estado, lo que dispara el useEffect de arriba.
+        checkAuth();
+    }, [accessToken, refreshAccessToken]); // Dependencias: accessToken para re-evaluar al cambiar, refreshAccessToken para asegurar su disponibilidad
+
+    // Función de login: ahora acepta ambos tokens
+    const login = (newAccessToken, newRefreshToken, userData) => {
+        localStorage.setItem("access_token", newAccessToken);
+        localStorage.setItem("refresh_token", newRefreshToken);
+        setAccessToken(newAccessToken);
+        setRefreshToken(newRefreshToken);
+        setUser(userData); // También podemos setear userData directamente aquí si viene del login
+        setIsAuthenticated(true);
+        console.log("Login exitoso. Tokens y usuario guardados.");
     };
 
+    // Función de logout
     const logout = () => {
-        // CAMBIO CLAVE: Se elimina la clave "token" de localStorage.
-        localStorage.removeItem("token");
-        setToken(null);
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        setAccessToken(null);
+        setRefreshToken(null);
+        setUser(null);
+        setIsAuthenticated(false);
+        console.log("Cierre de sesión.");
     };
 
     // El valor que se comparte con toda la aplicación.
     const value = {
-        token, // <--- CAMBIO CLAVE: Exponemos el token para las llamadas a la API.
+        token: accessToken, // Renombrado a `token` para compatibilidad con `Player.jsx`
         user,
         isAuthenticated,
         loading,
         login,
         logout,
+        refreshAccessToken // Exponer la función de refresco si es necesario llamarla manualmente
     };
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {/* Solo renderiza los hijos cuando la carga inicial ha terminado */}
+            {!loading && children} 
         </AuthContext.Provider>
     );
 };

@@ -85,24 +85,16 @@
 }
 
 .image-upload-button:hover {
-    background: #ffd700;
+    background: #e9d359;
     color: #2b1d0f;
     transform: scale(1.1);
 }
 
-/* --- Columna Derecha: Detalles del Perfil --- */
-.profile-details {
-    flex-grow: 1; /* Ocupa todo el espacio restante */
-    display: flex;
-    flex-direction: column;
-    text-align: left; /* Alinea el texto a la izquierda */
-}
-
 /* --- Vista de Información (No Edición) --- */
 .profile-info .username-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    display: flex;         /* Activa Flexbox */
+    align-items: center;   /* Centra verticalmente */
+    gap: 10px;             /* Espacio entre nombre y lápiz (puedes ajustarlo) */
     margin-bottom: 15px;
 }
 
@@ -112,16 +104,19 @@
     font-size: 28px;
     color: white;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    /* SIN 'flex: 1' */
 }
 
 .edit-button {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 20px;       /* Controla el tamaño del lápiz */
+    line-height: 1;        /* Ayuda a alinear el emoji correctamente */
     cursor: pointer;
     padding: 0;
     color: rgba(255, 255, 255, 0.7);
     transition: transform 0.2s, color 0.2s;
+    /* SIN 'position: absolute' NI OTRAS REGLAS DE POSICIONAMIENTO */
 }
 .edit-button:hover {
     transform: scale(1.2);
@@ -300,7 +295,7 @@
 }
 
 .image-options-modal .modal-button {
-    background-color: #4a4a70;
+    background-color: linear-gradient(#9b7e20, #774b1f);
     color: #fff;
     border: 1px solid #c0a062;
     padding: 10px 20px;
@@ -316,9 +311,9 @@
 }
 
 .image-options-modal .modal-button.cancel {
-    background-color: transparent;
+    background-color: #a34d4d;
     border: 1px solid #ff4d4d;
-    color: #ff4d4d;
+    color: #000000;
 }
 
 .image-options-modal .modal-button.cancel:hover {

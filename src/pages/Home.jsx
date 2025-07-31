@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+
+// Componentes
 import Header from "../components/Header";
-import Leaderboard from "../pages/Leaderboard/Leaderboard"; 
 import Footer from "../components/Footer";
+import Leaderboard from "../pages/Leaderboard/Leaderboard";
+import TypingEffect from '../components/TypingEffect';
 
 function Home() {
     const [playLink, setPlayLink] = useState("/register");
+    const [isTypingDone, setIsTypingDone] = useState(false);
+
+    const fullTitle = "Biienvenido a Gods of Eternia";
 
     useEffect(() => {
         document.title = 'Inicio | Gods Of Eternia';
@@ -21,9 +27,25 @@ function Home() {
             <main className="content">
                 <section className="hero-section">
                     <div className="hero-content">
-                        <h2>
-                            Bienvenido a <span>Gods of Eternia</span>
-                        </h2>
+                        <div className="typing-container">
+                            <h2>
+                                {isTypingDone ? (
+                                    <>
+                                        Bienvenido a <span>Gods of Eternia</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <TypingEffect
+                                            text={fullTitle} // Usando la variable correcta
+                                            speed={80}
+                                            onComplete={() => setIsTypingDone(true)}
+                                        />
+                                        <span className="typing-cursor"></span>
+                                    </>
+                                )}
+                            </h2>
+                        </div>
+                        
                         <p className="subtitle">
                             Sumérgete en un mundo épico de fantasía medieval donde los dioses caminan entre los mortales.
                         </p>
@@ -35,6 +57,7 @@ function Home() {
                         </div>
                     </div>
                 </section>
+
                 <section className="feature-section">
                     <div className="feature-content">
                         <h2>Desde el Escritorio del Cronista</h2>
@@ -46,7 +69,6 @@ function Home() {
                         </Link>
                     </div>
                 </section>
-                
             </main>
             <Footer />
         </div>

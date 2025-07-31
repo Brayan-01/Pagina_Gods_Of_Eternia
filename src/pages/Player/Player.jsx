@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useCallback, useRef } from "react"; // 1. Importar useRef
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import CameraModal from "./Modal/CameraModal"; // Ruta de importación actualizada
 import "./Player.css";
-import knightAvatar from '../../assets/knight.png'
+import knightAvatar from '../../assets/knight.png';
 
 const Player = () => {
     useEffect(() => {
@@ -12,7 +13,7 @@ const Player = () => {
 
     const { token, user, logout } = useAuth();
     const navigate = useNavigate();
-
+    
     // --- ESTADOS DEL COMPONENTE ---
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
@@ -29,15 +30,12 @@ const Player = () => {
     });
     const [error, setError] = useState(null);
     const [notification, setNotification] = useState({ message: '', type: '' });
-    
-    // 2. Nuevo estado para controlar la visibilidad del modal de opciones de imagen
     const [showImageOptions, setShowImageOptions] = useState(false);
+    const [showCamera, setShowCamera] = useState(false);
 
-    // 3. Referencias para los inputs de archivo (galería y cámara)
     const fileInputRef = useRef(null);
-    const cameraInputRef = useRef(null);
-
     const defaultAvatar = knightAvatar;
+    // Asegúrate de que esta variable de entorno esté configurada en tu archivo .env
     const API_URL = import.meta.env.VITE_API_URL;
 
     // --- LÓGICA DE LA APLICACIÓN (FUNCIONES) ---
@@ -52,6 +50,7 @@ const Player = () => {
     const fetchProfileData = useCallback(async () => {
         setLoading(true);
         setError(null);
+
         if (!token) {
             navigate("/login");
             return;
@@ -59,14 +58,10 @@ const Player = () => {
 
         try {
             const response = await fetch(`${API_URL}/perfil`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
+                headers: { "Authorization": `Bearer ${token}` },
             });
-
             const data = await response.json();
+
             if (response.ok) {
                 setProfileData({
                     username: data.username || "",
@@ -74,18 +69,14 @@ const Player = () => {
                     descripcion: data.descripcion || "Un valiente héroe cuya historia está por escribirse...",
                     puntajes: data.puntajes || [],
                 });
-                setEditedData({
-                    username: data.username || "",
-                    descripcion: data.descripcion || "",
-                });
+                setEditedData({ username: data.username, descripcion: data.descripcion });
                 setProfileImage(data.foto_perfil || defaultAvatar);
             } else {
                 setError(data.error || "Error al cargar el perfil.");
-                if (response.status === 401 || response.status === 403) {
-                    logout();
-                }
+                if (response.status === 401 || response.status === 403) logout();
             }
         } catch (err) {
+            console.error("Error de conexión:", err);
             setError("No se pudo conectar con el servidor.");
         } finally {
             setLoading(false);
@@ -98,6 +89,7 @@ const Player = () => {
 
     const handleImageUpload = async (file) => {
         if (!file || !token) return;
+
         setNotification({ message: 'Subiendo imagen...', type: 'loading' });
         const formData = new FormData();
         formData.append('profile_picture', file);
@@ -109,14 +101,18 @@ const Player = () => {
                 body: formData,
             });
             const result = await response.json();
+
             if (response.ok) {
-                setProfileImage(result.foto_perfil_url);
+                // Actualiza la imagen de perfil con la URL devuelta por el backend
+                setProfileImage(result.foto_perfil_url); 
                 setNotification({ message: result.message || '¡Imagen actualizada!', type: 'success' });
             } else {
                 setNotification({ message: result.error || 'Error al subir la imagen.', type: 'error' });
+                // Si falla, vuelve a cargar los datos para restaurar la imagen anterior
                 fetchProfileData();
             }
         } catch (err) {
+            console.error("Error de conexión al subir imagen:", err);
             setNotification({ message: 'Error de conexión.', type: 'error' });
         }
     };
@@ -137,27 +133,31 @@ const Player = () => {
         const reader = new FileReader();
         reader.onload = (event) => setProfileImage(event.target.result);
         reader.readAsDataURL(file);
+        
         handleImageUpload(file);
         setError(null);
     };
 
-    // 4. Nuevas funciones para manejar las opciones de imagen
-    const handleProfileImageClick = () => {
-        setShowImageOptions(true);
+    const handlePhotoCaptured = (imageFile) => {
+        if (!imageFile) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => setProfileImage(event.target.result);
+        reader.readAsDataURL(imageFile);
+
+        handleImageUpload(imageFile);
     };
 
+    const handleProfileImageClick = () => setShowImageOptions(true);
     const handleSelectFromGallery = () => {
         setShowImageOptions(false);
-        fileInputRef.current.click(); // Activa el input de la galería
+        fileInputRef.current.click();
     };
-
     const handleTakePhoto = () => {
         setShowImageOptions(false);
-        cameraInputRef.current.click(); // Activa el input de la cámara
+        setShowCamera(true);
     };
-
     const handleEdit = () => setEditing(true);
-
     const handleCancel = () => {
         setEditing(false);
         setEditedData({
@@ -170,6 +170,7 @@ const Player = () => {
     const handleSave = async () => {
         setLoading(true);
         setError(null);
+
         try {
             const response = await fetch(`${API_URL}/perfil`, {
                 method: "PUT",
@@ -177,20 +178,19 @@ const Player = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    username: editedData.username,
-                    descripcion: editedData.descripcion,
-                }),
+                body: JSON.stringify(editedData),
             });
             const result = await response.json();
+
             if (response.ok) {
-                await fetchProfileData();
+                await fetchProfileData(); // Recarga los datos para mostrar la información actualizada
                 setEditing(false);
                 setNotification({ message: 'Perfil actualizado correctamente.', type: 'success' });
             } else {
                 setError(result.error || "Error al actualizar el perfil.");
             }
         } catch (err) {
+            console.error("Error de conexión al guardar:", err);
             setError("No se pudo conectar con el servidor.");
         } finally {
             setLoading(false);
@@ -202,7 +202,6 @@ const Player = () => {
         setEditedData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    // --- RENDERIZADO DEL COMPONENTE ---
     if (loading && !profileData.username) {
         return <div className="loading-screen">Cargando Perfil...</div>;
     }
@@ -213,7 +212,6 @@ const Player = () => {
                 {notification.message}
             </div>
 
-            {/* 5. Renderizado del Modal de Opciones de Imagen */}
             {showImageOptions && (
                 <div className="image-options-modal-overlay" onClick={() => setShowImageOptions(false)}>
                     <div className="image-options-modal" onClick={(e) => e.stopPropagation()}>
@@ -225,49 +223,36 @@ const Player = () => {
                 </div>
             )}
 
+            <CameraModal
+                show={showCamera}
+                onClose={() => setShowCamera(false)}
+                onCapture={handlePhotoCaptured}
+            />
+
             <div className="profile-container">
-                {error && !profileData.username ? (
-                    <div className="profile-box">
-                        <div className="error-message">Error: {error}</div>
-                        <button className="save-button" onClick={fetchProfileData}>
-                            🔄 Reintentar
-                        </button>
-                    </div>
-                ) : (
-                    <div className="profile-box">
-                        <h2>Perfil del Héroe</h2>
-                        {error && <div className="error-message">{error}</div>}
-                        <div className="profile-main-content">
-                            <div className="profile-image-container">
-                                <img
-                                    src={profileImage || defaultAvatar}
-                                    alt="Perfil del jugador"
-                                    className="profile-image"
-                                    onError={(e) => { e.target.src = defaultAvatar; }}
-                                />
-                                {/* 6. El botón ahora abre el modal en lugar de activar el input directamente */}
-                                <div className="image-upload-button" onClick={handleProfileImageClick} title="Cambiar imagen">
-                                    📷
-                                </div>
-                                
-                                {/* 7. Inputs de archivo ocultos */}
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    style={{ display: "none" }}
-                                />
-                                <input
-                                    ref={cameraInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    capture="user" // Pide usar la cámara frontal
-                                    onChange={handleImageChange}
-                                    style={{ display: "none" }}
-                                />
+                <div className="profile-box">
+                    <h2>Perfil del Héroe</h2>
+                    {error && <div className="error-message">{error}</div>}
+                    <div className="profile-main-content">
+                        <div className="profile-image-container">
+                            <img
+                                src={profileImage || defaultAvatar}
+                                alt="Perfil del jugador"
+                                className="profile-image"
+                                onError={(e) => { e.target.src = defaultAvatar; }}
+                            />
+                            <div className="image-upload-button" onClick={handleProfileImageClick} title="Cambiar imagen">
+                                📷
                             </div>
-                            <div className="profile-details">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                style={{ display: "none" }}
+                            />
+                        </div>
+                        <div className="profile-details">
                             {editing ? (
                                 <div className="profile-edit">
                                     <div className="input-group">
@@ -299,7 +284,7 @@ const Player = () => {
                             ) : (
                                 <div className="profile-info">
                                     <div className="username-section">
-                                        <h3>{profileData.username || (user && user.username) || "Héroe Anónimo"}</h3>
+                                        <h3>{profileData.username || "Héroe Anónimo"}</h3>
                                         <button className="edit-button" onClick={handleEdit} title="Editar perfil">✏️</button>
                                     </div>
                                     <div className="description">
@@ -322,10 +307,9 @@ const Player = () => {
                                     </div>
                                 </div>
                             )}
-                            </div>
                         </div>
                     </div>
-                )}
+                </div>
             </div>
         </>
     );

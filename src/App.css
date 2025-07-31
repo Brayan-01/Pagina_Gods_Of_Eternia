@@ -40,3 +40,26 @@
 .read-the-docs {
   color: #888;
 }
+
+.typing-container h2 {
+  display: flex; /* Asegura que los elementos se alineen en una línea */
+  align-items: center;
+}
+
+.typing-cursor {
+  display: inline-block;
+  background-color: white; /* O el color que prefieras para el cursor */
+  width: 10px;
+  height: 2rem; /* Ajusta la altura al tamaño de tu fuente */
+  margin-left: 5px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
