@@ -1,95 +1,94 @@
-Gods of Eternia ⚔️
-
-Un innovador juego educativo diseñado para hacer del aprendizaje una aventura épica. "Gods of Eternia" combina la emoción de un videojuego con contenido educativo para ofrecer una experiencia única y efectiva.
+⚔️ Gods of Eternia
+Gods of Eternia es un innovador juego educativo que convierte el aprendizaje en una aventura épica. Este proyecto fusiona la emoción de los videojuegos con contenido pedagógico, ofreciendo una experiencia única, inmersiva y altamente interactiva.
 
 📖 Descripción
+Gods of Eternia tiene como objetivo transformar la forma en que las personas aprenden mediante la gamificación. A través de misiones, desafíos y una narrativa envolvente, los jugadores pueden adquirir y reforzar conocimientos de manera entretenida y significativa.
 
-Gods of Eternia es un proyecto que busca transformar la manera en que las personas aprenden, utilizando la gamificación como herramienta principal. A través de desafíos, misiones y una narrativa envolvente, los jugadores podrán adquirir y reforzar conocimientos de una forma divertida e interactiva.
+El proyecto consta de dos componentes principales:
 
-El proyecto se compone de dos partes principales:
+🌐 Plataforma Web: Para registro de usuarios, seguimiento del progreso y acceso a contenido adicional.
 
-Una página web donde los usuarios pueden registrarse, seguir su progreso y acceder a información adicional.
+🎮 Videojuego Interactivo: Diseñado para proporcionar un entorno de aprendizaje inmersivo a través del motor GDevelop.
 
-El juego, desarrollado para ser una plataforma de aprendizaje inmersiva.
+✨ Características Destacadas
+📚 Aprendizaje Gamificado: Misiones, acertijos y retos diseñados para enseñar de forma práctica.
 
-✨ Características Principales
-Aprendizaje Interactivo: Misiones y puzzles diseñados para enseñar y evaluar conocimientos de manera práctica.
+💻 Plataforma Web Integrada: Panel de usuario para gestión de cuenta y progreso académico.
 
-Plataforma Web Integrada: Sigue tu progreso y gestiona tu cuenta desde nuestro portal web.
+📖 Narrativa Envolvente: Explora el mundo de Eternia y sumérgete en una historia que guía tu proceso de aprendizaje.
 
-Narrativa Atrapante: Sumérgete en el mundo de Eternia y deja que su historia te guíe en tu camino de aprendizaje.
-
-Enfoque Modular: Diseñado para poder expandir fácilmente el contenido educativo a nuevas áreas del conocimiento.
+🧩 Diseño Modular: Permite la expansión sencilla del contenido educativo a nuevas temáticas.
 
 🛠️ Tecnologías Utilizadas
-Este proyecto utiliza un conjunto de tecnologías modernas para garantizar una experiencia robusta y escalable.
+🔧 Plataforma Web
+Frontend: React + Vite
 
-Página Web
-Frontend:
+Backend: Django (Python)
 
-Backend:
+Base de Datos: SQLite / PostgreSQL (dependiendo del entorno)
 
-Base de Datos:
+Contenerización: Docker
 
-Contenerización:
-
-Videojuego
-Motor de Juego:
+🎮 Videojuego
+Motor de Juego: GDevelop
 
 🚀 Cómo Empezar
-Para poner en marcha el entorno de desarrollo de la página web, sigue estos pasos.
+Sigue estos pasos para ejecutar el entorno de desarrollo local de la plataforma web:
 
-Requisitos Previos
-Asegúrate de tener instalado lo siguiente en tu sistema:
+🔍 Requisitos Previos
+Asegúrate de tener instalado:
 
-Node.js (versión 18.x o superior)
+Node.js (v18 o superior)
 
 Docker
 
 Git
 
-Instalación y Ejecución
+🧪 Instalación y Ejecución
 Clona el repositorio:
 
-Bash
-
+bash
+Copiar
+Editar
 git clone https://github.com/tu-usuario/gods-of-eternia.git
 cd gods-of-eternia
 Instala las dependencias del frontend:
 
-Bash
-
-# Navega a la carpeta del frontend (ajusta el nombre si es necesario)
+bash
+Copiar
+Editar
 cd web/frontend
 npm install
 Inicia el entorno de desarrollo:
-Una vez instaladas las dependencias, puedes iniciar la aplicación web con el siguiente comando:
 
-Bash
-
+bash
+Copiar
+Editar
 npm run dev
-Para el juego:
-El desarrollo del juego se gestiona a través del motor GDevelop. Para trabajar en él, abre el archivo del proyecto (.json) directamente desde la aplicación de GDevelop.
+🎮 Para el juego
+Abre el archivo .json del proyecto con GDevelop para comenzar a editar o ejecutar el videojuego.
 
 🤝 Cómo Contribuir
-¡Estamos abiertos a contribuciones que ayuden a mejorar Gods of Eternia! Si deseas colaborar, por favor sigue estos pasos:
+¡Contribuciones son bienvenidas! Para colaborar, sigue estos pasos:
 
-Haz un Fork de este repositorio.
+Haz un fork del repositorio.
 
-Crea una nueva rama para tu funcionalidad (git checkout -b feature/nueva-funcionalidad).
+Crea una rama con tu funcionalidad:
+git checkout -b feature/mi-funcionalidad
 
-Realiza tus cambios y haz commit (git commit -m 'Añade nueva funcionalidad').
+Realiza los cambios y haz commit:
+git commit -m "Agrega nueva funcionalidad"
 
-Haz push a tu rama (git push origin feature/nueva-funcionalidad).
+Haz push a tu rama:
+git push origin feature/mi-funcionalidad
 
-Abre un Pull Request para que podamos revisar tus cambios.
+Abre un Pull Request y lo revisaremos.
 
 📄 Licencia
-Este proyecto se distribuye bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
-
-(Nota: Si no tienes un archivo de licencia, te recomiendo crear uno. La licencia MIT es una buena opción para empezar).
+Este proyecto está licenciado bajo la Licencia MIT. Puedes usarlo, modificarlo y distribuirlo libremente, siempre dando crédito al autor original.
 
 👨‍💻 Autores
-Brayan Penagos, Ian Morales, Sebasitan Lopez- Desarrollo inicial - Brayan-01
+[Tu Nombre / Nombre del equipo] – Desarrollo inicial
+GitHub: @tu-usuario-de-github
 
-¡Gracias por tu interés en Gods of Eternia!
+¡Gracias por apoyar el desarrollo de Gods of Eternia! Tu interés ayuda a construir nuevas formas de aprender jugando. 🌟
