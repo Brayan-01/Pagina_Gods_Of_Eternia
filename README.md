@@ -1,7 +1,9 @@
 Gods of Eternia ⚔️
+
 Un innovador juego educativo diseñado para hacer del aprendizaje una aventura épica. "Gods of Eternia" combina la emoción de un videojuego con contenido educativo para ofrecer una experiencia única y efectiva.
 
 📖 Descripción
+
 Gods of Eternia es un proyecto que busca transformar la manera en que las personas aprenden, utilizando la gamificación como herramienta principal. A través de desafíos, misiones y una narrativa envolvente, los jugadores podrán adquirir y reforzar conocimientos de una forma divertida e interactiva.
 
 El proyecto se compone de dos partes principales:
