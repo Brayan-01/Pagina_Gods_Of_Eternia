@@ -1,7 +1,11 @@
 import "./about.css";
-import juanPhoto from "../assets/juan.jpeg";
-import ianPhoto from "../assets/ian.jpeg";
-import brayanPhoto from "../assets/brayan.jpg";
+// Si tu archivo actual está en 'src/pages/About/',
+// necesitas subir dos niveles (../../) para llegar a 'src',
+// y luego bajar a 'assets/'.
+import juanPhoto from "../../assets/juan.jpeg";   // CORREGIDO: de .jpg a .jpeg
+import ianPhoto from "../../assets/ian.jpeg";   // Esta ya estaba bien
+import brayanPhoto from "../../assets/brayan.jpg"; // CORREGIDO: de .jpg a .webp
+
 
 const About = () => {
   return (

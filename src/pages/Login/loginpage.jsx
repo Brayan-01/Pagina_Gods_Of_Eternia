@@ -4,7 +4,6 @@ import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { jwtDecode } from "jwt-decode"; // <-- ¡IMPORTANTE! Asegúrate de tener esta importación
 import "./loginpage.css";
 
 const Login = () => {
@@ -22,7 +21,7 @@ const Login = () => {
     // Estados del modal de recuperación
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [resetEmail, setResetEmail] = useState("");
-    const [resetMessage, setResetEmailMessage] = useState(""); // Renombrado para claridad
+    const [resetMessage, setResetEmailMessage] = useState("");
     const [resetError, setResetError] = useState("");
     const [isResetLoading, setIsResetLoading] = useState(false);
 
@@ -35,22 +34,27 @@ const Login = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, isAuthenticated } = useAuth(); // Obtiene login y isAuthenticated del contexto
 
     const API_URL = import.meta.env.VITE_API_URL;
 
+    // Efecto para manejar la redirección después de la autenticación
+    useEffect(() => {
+        if (isAuthenticated && !isLoginLoading) {
+            navigate("/player");
+        }
+    }, [isAuthenticated, isLoginLoading, navigate]);
+
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(""); // Limpia errores anteriores
-
-        // --- VALIDACIÓN DE CORREO PERSONALIZADA ---
-        if (!email || !email.includes('@')) {
-            setError("Por favor, ingresa un correo electrónico válido.");
-            return; // Detiene el proceso si el correo no es válido
-        }
-        // --- FIN DE LA VALIDACIÓN ---
-
+        setError("");
         setIsLoginLoading(true);
+
+        if (!email || !email.includes('@') || !email.includes('.')) {
+            setError("Por favor, ingresa un correo electrónico válido.");
+            setIsLoginLoading(false);
+            return;
+        }
 
         if (!API_URL) {
             setError("Error de configuración: La URL de la API no está definida.");
@@ -59,7 +63,8 @@ const Login = () => {
         }
 
         try {
-            const response = await fetch(`${API_URL}/login`, {
+            // CORRECCIÓN: Usar backticks para la interpolación del string
+            const response = await fetch(`${API_URL}/login`, { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
@@ -67,24 +72,11 @@ const Login = () => {
 
             const data = await response.json();
 
-            // *** ESTA ES LA PARTE CLAVE MODIFICADA ***
             if (response.ok && data.access_token && data.refresh_token) {
-                // Decodifica el access_token para obtener la información del usuario
-                const decodedUser = jwtDecode(data.access_token);
-                
-                // Construye el objeto de datos de usuario para el contexto
-                const userData = {
-                    id: decodedUser.sub, // 'sub' es el ID de usuario estándar en JWT
-                    username: data.username || decodedUser.username, // Usa el username si viene en la respuesta, si no del token
-                    email: decodedUser.email // El email debería estar en el payload del token
-                };
-
-                // Llama a la función login del AuthContext con AMBOS tokens y los datos del usuario
-                login(data.access_token, data.refresh_token, userData);
-                
-                navigate("/player"); // Redirige al usuario
+                login(data.access_token, data.refresh_token); // Pasa ambos tokens al login del contexto
+                // La redirección se maneja en el useEffect basado en isAuthenticated
             } else {
-                setError(data.msg || "Error al iniciar sesión"); // Usar 'msg' del backend
+                setError(data.error || data.message || "Error al iniciar sesión");
             }
         } catch (err) {
             console.error("Error al conectar con el servidor de login:", err);
@@ -94,16 +86,17 @@ const Login = () => {
         }
     };
 
-    const handleApiCall = async (apiFunction, onSuccess, onError) => {
+    const handleApiCall = async (apiFunction, onSuccess) => {
         setIsResetLoading(true);
         setResetError("");
         setResetEmailMessage("");
+
         try {
             const data = await apiFunction();
             onSuccess(data);
         } catch (error) {
             console.error("Error en la llamada a la API:", error);
-            const errorMessage = onError(error) || "No se pudo conectar con el servidor.";
+            const errorMessage = error.error || error.message || "No se pudo conectar con el servidor.";
             setResetError(errorMessage);
         } finally {
             setIsResetLoading(false);
@@ -133,17 +126,16 @@ const Login = () => {
 
     const handleRequestCode = (e) => {
         e.preventDefault();
-        setResetError(""); // Limpia errores anteriores
+        setResetError("");
 
-        // --- VALIDACIÓN DE CORREO PERSONALIZADA (PARA EL MODAL) ---
-        if (!resetEmail || !resetEmail.includes('@')) {
+        if (!resetEmail || !resetEmail.includes('@') || !resetEmail.includes('.')) {
             setResetError("Por favor, ingresa un correo electrónico válido.");
-            return; // Detiene el proceso si el correo no es válido
+            return;
         }
-        // --- FIN DE LA VALIDACIÓN ---
 
         const apiFunction = async () => {
-            const response = await fetch(`${API_URL}/forgot_password`, {
+            // CORRECCIÓN: Usar backticks para la interpolación del string
+            const response = await fetch(`${API_URL}/request-password-reset`, { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: resetEmail }),
@@ -153,14 +145,12 @@ const Login = () => {
             return data;
         };
 
-        const onSuccess = () => {
+        const onSuccess = (data) => {
             setResetStep('enterCode');
-            setResetEmailMessage("Se ha enviado un código a tu correo.");
+            setResetEmailMessage(data.message || "Se ha enviado un código a tu correo.");
         };
-        
-        const onError = (error) => error.error || "Error al enviar el correo.";
 
-        handleApiCall(apiFunction, onSuccess, onError);
+        handleApiCall(apiFunction, onSuccess);
     };
 
     const handleResetWithCode = (e) => {
@@ -171,21 +161,24 @@ const Login = () => {
             setResetError("Las contraseñas no coinciden.");
             return;
         }
+        
+        if (newPassword.length < 6) { 
+            setResetError("La contraseña debe tener al menos 6 caracteres.");
+            return;
+        }
+
         if (resetCode.length !== 6) {
             setResetError("El código de verificación debe tener 6 dígitos.");
             return;
         }
-        if (!newPassword) { // Añadir validación simple para que la nueva contraseña no esté vacía
-            setResetError("La nueva contraseña no puede estar vacía.");
-            return;
-        }
-
+        
         const apiFunction = async () => {
-            const response = await fetch(`${API_URL}/reset_password`, {
+            // CORRECCIÓN: Usar backticks para la interpolación del string
+            const response = await fetch(`${API_URL}/reset-password`, { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    token: resetCode,
+                    reset_code: resetCode, 
                     new_password: newPassword
                 }),
             });
@@ -200,10 +193,8 @@ const Login = () => {
                 closeForgotPasswordModal();
             }, 2000);
         };
-        
-        const onError = (error) => error.error || "Código incorrecto o expirado.";
 
-        handleApiCall(apiFunction, onSuccess, onError);
+        handleApiCall(apiFunction, onSuccess);
     };
 
     return (
@@ -352,6 +343,6 @@ const Login = () => {
             </AnimatePresence>
         </div>
     );
-};
+}
 
 export default Login;

@@ -11,10 +11,12 @@ import Register from './pages/Register/Register';
 import Verification from './pages/Verification/Verification'; // Página de verificación
 import Player from './pages/Player/Player'; 
 import BlogPage from './pages/Blog/BlogPage'; // Página del blog
+import About from './pages/About/about'; // Página de "Sobre Nosotros"
 
 const App = () => {
   return (
       <AuthProvider>
+        
         <Header /> {/* El Header necesita estar dentro del Provider para saber si el usuario está logueado */}
         <Routes>
           {/* --- Rutas Públicas --- */}
@@ -23,6 +25,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/verificar" element={<Verification />} />
           <Route path="/blog" element={<BlogPage />} />
+          <Route path="/about" element={<About />} />
 
           {/* --- Rutas Protegidas --- */}
           <Route element={<ProtectedRoute />}>

@@ -1,114 +1,217 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-const CreatePost = ({ onPostCreated, postToEdit, onPostUpdated, onCancelEdit, onCancelCreate }) => {
+const CreatePost = ({ onPostCreated, postToEdit, onCancelEdit, onCancelCreate, showNotification, currentUser, categories }) => {
     // --- ESTADOS INTERNOS DEL FORMULARIO ---
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [imageFile, setImageFile] = useState(null); // Guarda el archivo de imagen para subirlo
-    const [imagePreview, setImagePreview] = useState(''); // Guarda la URL de previsualización
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const fileInputRef = useRef(null);
 
-    const isEditing = !!postToEdit; // Determina si estamos en modo "edición"
+    const isEditing = !!postToEdit;
 
-    // Efecto para rellenar el formulario si estamos en modo edición
+    // Efecto para rellenar o limpiar el formulario
     useEffect(() => {
-        if (isEditing) {
-            setTitle(postToEdit.title);
-            setContent(postToEdit.content);
-            setImagePreview(postToEdit.imageUrl);
-            setImageFile(null); // Reseteamos el archivo
+        if (isEditing && postToEdit) {
+            setTitle(postToEdit.titulo || '');
+            setContent(postToEdit.content || '');
+            setSelectedCategoryId(postToEdit.categoria_id || '');
+            setImagePreview(postToEdit.imageUrl || '');
+            setImageFile(null); // Limpiar el archivo para nueva subida
+        } else {
+            // Limpiar el formulario para creación
+            setTitle('');
+            setContent('');
+            setImageFile(null);
+            setImagePreview('');
+            setSelectedCategoryId('');
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
         }
-    }, [postToEdit, isEditing]);
+    }, [isEditing, postToEdit]);
 
-    // Maneja la selección de un nuevo archivo de imagen
+    const API_URL = import.meta.env.VITE_API_URL;
+    const token = localStorage.getItem('access_token'); // Asegúrate de usar 'access_token' para compatibilidad
+
     const handleImageChange = (e) => {
-        const file = e.target.files && e.target.files[0];
+        const file = e.target.files[0];
         if (file) {
-            setImageFile(file); // Guardamos el objeto del archivo para la subida
-            setImagePreview(URL.createObjectURL(file)); // Creamos una URL local para la vista previa
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        } else {
+            setImageFile(null);
+            setImagePreview('');
         }
     };
 
-    // Maneja el envío del formulario
-    const handleSubmit = (e) => {
+    const handleClearImage = () => {
+        setImageFile(null);
+        setImagePreview('');
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const handleCancel = () => {
+        if (isEditing) {
+            onCancelEdit?.();
+        } else {
+            onCancelCreate?.();
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title || !content) {
-            alert("El título y el contenido son obligatorios.");
+        setIsSubmitting(true);
+
+        if (!currentUser?.verificado) {
+            showNotification("Debes verificar tu cuenta para poder publicar.", "error");
+            setIsSubmitting(false);
             return;
         }
 
-        if (isEditing) {
-            // En modo edición, pasa los datos actualizados al padre
-            onPostUpdated(postToEdit.id, { title, content, imageFile });
-        } else {
-            // En modo creación, pasa los datos nuevos al padre
-            onPostCreated({ title, content, imageFile });
+        if (!title.trim() || !content.trim() || !selectedCategoryId) {
+            showNotification("Por favor, rellena todos los campos obligatorios.", "error");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('titulo', title);
+        formData.append('texto', content);
+        formData.append('categoria_id', selectedCategoryId);
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
+
+        const method = isEditing ? 'PUT' : 'POST';
+        // CORRECCIÓN ESTRICTAMENTE NECESARIA: Añadir backticks para la interpolación de la URL
+        const urlPath = isEditing ? `/user/editar-publicacion/${postToEdit.id}` : '/user/crear-publicacion';
+        const successMessage = isEditing ? 'Crónica actualizada exitosamente!' : 'Crónica publicada exitosamente!';
+        const errorMessage = isEditing ? 'Error al actualizar la crónica.' : 'Error al publicar la crónica.';
+
+        try {
+            const url = new URL(urlPath, API_URL);
+            const response = await fetch(url.href, {
+                method: method,
+                headers: {
+                    // CORRECCIÓN ESTRICTAMENTE NECESARIA: Añadir backticks para la interpolación del token
+                    'Authorization': `Bearer ${token}`, 
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || errorMessage);
+            }
+
+            showNotification(successMessage, 'success');
+            
+            if (!isEditing) {
+                // CORRECCIÓN ESTRICTAMENTE NECESARIA: Llamar a onPostCreated sin argumentos
+                onPostCreated(); 
+            }
+            
+            handleCancel(); // Cierra el modal y limpia el formulario
+
+        } catch (error) {
+            console.error("Error en handleSubmit:", error);
+            showNotification(error.message || errorMessage, 'error');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
-    // Decide qué función de cancelación llamar
-    const handleCancel = () => {
-        if (isEditing) {
-            onCancelEdit();
-        } else {
-            onCancelCreate();
-        }
-    };
+    const defaultImagePlaceholder = "https://placehold.co/800x450/3c2f21/F0F0F0?text=Estandarte";
 
     return (
         <div className="create-post-container">
-            <h2>{isEditing ? 'Edita tu Crónica' : 'Forja una Nueva Leyenda'}</h2>
-            
+            <h2>{isEditing ? 'Editar Crónica' : 'Forjar Nueva Crónica'}</h2>
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
-                    <label htmlFor="title">Título del Manuscrito:</label>
+                    <label htmlFor="title">Título de la Crónica:</label>
                     <input
-                        id="title"
                         type="text"
+                        id="title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        placeholder="El título de tu épica..."
+                        placeholder="Un título épico para tu aventura..."
+                        maxLength={100}
                         required
+                        disabled={isSubmitting}
                     />
+                    <div className="character-count">{title.length}/100</div>
                 </div>
 
                 <div className="input-group">
                     <label htmlFor="content">Contenido de la Crónica:</label>
                     <textarea
                         id="content"
-                        rows="8"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        placeholder="Narra tus hazañas aquí..."
+                        placeholder="Detalla tu gesta, tus descubrimientos o tus reflexiones..."
+                        rows="8"
+                        maxLength={2000}
                         required
-                    />
+                        disabled={isSubmitting}
+                    ></textarea>
+                    <div className="character-count">{content.length}/2000</div>
+                </div>
+
+                <div className="input-group">
+                    <label htmlFor="category">Categoría:</label>
+                    <select
+                        id="category"
+                        value={selectedCategoryId}
+                        onChange={(e) => setSelectedCategoryId(e.target.value)}
+                        required
+                        disabled={isSubmitting}
+                    >
+                        <option value="">Selecciona una categoría...</option>
+                        {categories.map(category => (
+                            <option key={category.id} value={category.id}>
+                                {category.nombre}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="input-group">
                     <label htmlFor="imageUpload" className="image-upload-label">
-                        {imagePreview ? 'Cambiar Estandarte (Imagen)' : 'Seleccionar un Estandarte (Imagen)'}
+                        {imagePreview ? 'Cambiar Estandarte' : 'Seleccionar Estandarte'}
                     </label>
                     <input
                         id="imageUpload"
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
+                        disabled={isSubmitting}
+                        ref={fileInputRef}
                     />
                     <p className="image-recommendation">
-                        Para mejor calidad, se recomienda una imagen de al menos 800px de ancho.
+                        Recomendado: imagen de 800px de ancho.
                     </p>
                     {imagePreview && (
-                        <img src={imagePreview} alt="Vista previa" className="image-preview" />
+                        <div className="image-preview-container">
+                            <img src={imagePreview} alt="Vista previa" className="image-preview" onError={(e) => { e.target.onerror = null; e.target.src = defaultImagePlaceholder; }} />
+                            <button type="button" onClick={handleClearImage} className="clear-image-button" disabled={isSubmitting}>
+                                Borrar Imagen
+                            </button>
+                        </div>
                     )}
                 </div>
 
                 <div className="button-group">
-                    {(isEditing || onCancelCreate) && (
-                        <button type="button" className="cancel-button" onClick={handleCancel}>
-                            Cancelar
-                        </button>
-                    )}
-                    <button type="submit" className="save-button">
-                        {isEditing ? 'Guardar Cambios' : 'Publicar Crónica'}
+                    <button type="button" className="cancel-button" onClick={handleCancel} disabled={isSubmitting}>
+                        Cancelar
+                    </button>
+                    <button type="submit" className="save-button" disabled={isSubmitting}>
+                        {isSubmitting ? (isEditing ? 'Guardando...' : 'Publicando...') : (isEditing ? 'Guardar Cambios' : 'Publicar Crónica')}
                     </button>
                 </div>
             </form>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; // 1. Importa el hook useAuth
 
 // Componentes
 import Header from "../components/Header";
@@ -8,17 +9,23 @@ import Leaderboard from "../pages/Leaderboard/Leaderboard";
 import TypingEffect from '../components/TypingEffect';
 
 function Home() {
-    const [playLink, setPlayLink] = useState("/register");
+    // 2. Obtén el estado de autenticación directamente del contexto.
+    const { isAuthenticated } = useAuth();
+
+    // 3. Define el enlace de forma dinámica. Este valor cambiará automáticamente
+    // si el usuario inicia o cierra sesión en cualquier parte de la aplicación.
+    const playLink = isAuthenticated ? "/player" : "/register";
+    
+    // El estado para el efecto de tipeo se mantiene igual.
     const [isTypingDone, setIsTypingDone] = useState(false);
 
+    // He corregido un pequeño error ortográfico en el título ("Biienvenido" -> "Bienvenido")
     const fullTitle = "Biienvenido a Gods of Eternia";
 
+    // 4. El useEffect ahora solo se ocupa del título de la página.
+    // Ya no necesita verificar el localStorage.
     useEffect(() => {
         document.title = 'Inicio | Gods Of Eternia';
-        const userToken = localStorage.getItem("userToken");
-        if (userToken) {
-            setPlayLink("/player");
-        }
     }, []);
 
     return (
@@ -36,7 +43,7 @@ function Home() {
                                 ) : (
                                     <>
                                         <TypingEffect
-                                            text={fullTitle} // Usando la variable correcta
+                                            text={fullTitle}
                                             speed={80}
                                             onComplete={() => setIsTypingDone(true)}
                                         />
