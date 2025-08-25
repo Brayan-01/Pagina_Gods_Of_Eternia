@@ -286,7 +286,7 @@ const BlogPage = () => {
                                             </span>
                                         )}
                                         
-                                        {/* Título */}
+                               f         {/* Título */}
                                         <h3 className="card-title">
                                             {post.title}
                                         </h3>

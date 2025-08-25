@@ -13,8 +13,8 @@
   align-items: flex-start; /* Alinea la caja arriba */
   min-height: 100vh;
   width: 100%;
-  background: url("https://www.transparenttextures.com/patterns/old-map.png"),
-    linear-gradient(135deg, #2b1d0f, #593d1b);
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+  url('/fondo_1.png') no-repeat center center fixed;
   padding: 120px 20px 40px; /* Añadido padding inferior */
 }
 
@@ -124,7 +124,6 @@
   transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
 }
 
-/* 2. SOLUCIÓN: Anula explícitamente los estilos de interacción del navegador */
 .edit-button:hover,
 .edit-button:focus,
 .edit-button:active {
@@ -171,7 +170,7 @@
 }
 
 .stats {
-  display: flex; /* ¡La clave! Activa el layout flexible */
+  display: flex; 
   justify-content: space-around; /* Distribuye los 3 items con espacio uniforme */
   align-items: flex-start; /* Alinea los items en la parte superior */
   width: 100%; /* Asegura que ocupe todo el ancho del contenedor de detalles */

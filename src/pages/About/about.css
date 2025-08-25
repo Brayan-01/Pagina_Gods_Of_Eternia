@@ -6,7 +6,8 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url('https://www.transparenttextures.com/patterns/old-map.png'), linear-gradient(135deg, #2b1d0f, #593d1b);
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+  url('/fondo_1.png') no-repeat center center fixed;
   font-family: 'MedievalSharp', cursive;
   cursor: url('/assets/sword-cursor.png'), auto;
   padding: 20px;

@@ -3,74 +3,69 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 
 const Comment = ({ comment, currentUser, postAuthorId, onDelete, onEdit }) => {
-    // --- Verificación defensiva para la prop `comment` y `comment.texto` ---
-    // Si el comentario es nulo/indefinido o su texto es undefined, no renderizamos o mostramos un placeholder.
-    // Esto previene el TypeError. Puedes ajustar lo que se retorna (ej. un cargador).
-    if (!comment || typeof comment.texto === 'undefined') {
-        console.warn("Comentario o texto de comentario es undefined en Comment.jsx, no se renderizará.");
+    // --- Todos los Hooks se declaran aquí arriba, incondicionalmente ---
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedText, setEditedText] = useState(comment?.texto || ''); 
+    const textareaRef = useRef(null);
+
+    // ✅ CORRECCIÓN: El useEffect se mueve aquí arriba junto a los otros Hooks
+    // para asegurar que se llame en cada renderizado.
+    useEffect(() => {
+        if (isEditing && textareaRef.current) {
+            textareaRef.current.focus();
+            const len = textareaRef.current.value.length;
+            textareaRef.current.setSelectionRange(len, len);
+        }
+    }, [isEditing]);
+
+    // --- El 'early return' se mantiene, pero DESPUÉS de todas las llamadas a Hooks ---
+    if (!comment || typeof comment.texto !== 'string') {
+        console.warn("Comentario inválido o texto de comentario no es una cadena, no se renderizará.");
         return null; 
     }
 
-    const [isEditing, setIsEditing] = useState(false);
-    // --- Asegurarse de que editedText siempre sea un string ---
-    const [editedText, setEditedText] = useState(comment.texto || ''); 
-    const textareaRef = useRef(null);
-
-    const isCommentOwner = currentUser && currentUser.id === comment.autor_id;
-    const isPostOwner = currentUser && currentUser.id === postAuthorId;
+    // --- El resto de la lógica del componente continúa aquí ---
+    const isCommentOwner = !!currentUser && currentUser.id === comment.autor_id;
+    const isPostOwner = !!currentUser && currentUser.id === postAuthorId;
     
     const canDelete = isCommentOwner || isPostOwner;
     const canEdit = isCommentOwner;
 
-    useEffect(() => {
-        if (isEditing && textareaRef.current) {
-            textareaRef.current.focus();
-            textareaRef.current.select();
-        }
-    }, [isEditing]);
-
     const handleEditClick = () => {
+        setEditedText(comment.texto);
         setIsEditing(true);
     };
 
     const handleSaveEdit = () => {
-        if (editedText.trim() === '') {
+        if (typeof onEdit === 'function' && editedText.trim() !== '') {
+            onEdit(comment.id, editedText.trim());
+        } else if (editedText.trim() === '') {
             console.error("El comentario no puede estar vacío.");
-            return;
         }
-        onEdit(comment.id, editedText); // Llama a la prop onEdit del padre
         setIsEditing(false);
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        // --- Restablecer a comment.texto con verificación defensiva ---
         setEditedText(comment.texto || ''); 
     };
 
-    // --- FUNCIÓN CORREGIDA (se mantiene tal cual, ya estaba bien para fechas) ---
     const formatDate = (dateString) => {
         if (!dateString) return "Fecha desconocida";
-
-        // Aseguramos que la fecha se interprete como UTC añadiendo 'Z' si no está presente.
-        // Esto soluciona el problema de la diferencia horaria.
-        const utcDateString = dateString.endsWith('Z') ? dateString : `${dateString}Z`;
-        const date = new Date(utcDateString);
-
-        const options = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        };
-        
-        // Usamos toLocaleString para convertir la fecha UTC a la zona horaria local del navegador.
-        // 'es-ES' o 'undefined' funcionan bien.
-        return date.toLocaleString('es-ES', options);
+        try {
+            const utcDateString = dateString.endsWith('Z') ? dateString : `${dateString}Z`;
+            const date = new Date(utcDateString);
+            if (isNaN(date.getTime())) return "Fecha inválida";
+            return date.toLocaleString('es-ES', {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit',
+            });
+        } catch (error) {
+            console.error("Error al formatear la fecha:", error);
+            return "Fecha desconocida";
+        }
     };
 
-    // La lógica de profilePic ya es defensiva, se mantiene.
     const profilePic = comment.autor_foto_perfil_url || "https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg";
 
     return (
@@ -79,57 +74,61 @@ const Comment = ({ comment, currentUser, postAuthorId, onDelete, onEdit }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="comment-card"
+            className="comment"
         >
             <div className="comment-header">
                 <div className="comment-author-info">
-                    {/* Añadir verificación defensiva para alt de imagen y nombre de usuario */}
                     <img src={profilePic} alt={comment.autor_username || 'Usuario'} className="comment-author-avatar" onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = "https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg";
                     }}/>
-                    <div className="comment-author-details">
-                        <span className="comment-author-name">{comment.autor_username || 'Usuario Desconocido'} {comment.autor_verificado && '✅'}</span>
-                        <span className="comment-date">{formatDate(comment.created_at)}</span>
-                        {comment.edited_at && comment.edited_at !== comment.created_at && (
-                           <span className="comment-edited-tag">(editado)</span>
-                        )}
+                    <div>
+                        <span className="comment-author">
+                            {comment.autor_username || 'Usuario Desconocido'}{" "}
+                            {comment.autor_verificado && <span className="verified-badge" title="Verificado">✅</span>}
+                        </span>
+                        <div className="comment-date">
+                            {formatDate(comment.created_at)}{" "}
+                            {comment.edited_at && comment.edited_at !== comment.created_at && (
+                                <span className="comment-edited-tag">(editado)</span>
+                            )}
+                        </div>
                     </div>
                 </div>
-                {(canDelete || canEdit) && (
-                    <div className="comment-actions">
+                {(canDelete || canEdit) && !isEditing && (
+                    <div className="comment-controls">
                         {canEdit && (
-                            <button onClick={handleEditClick} className="action-button edit-button" title="Editar comentario">
-                                ✏️
+                            <button type="button" onClick={handleEditClick} className="action-button edit" title="Editar comentario">
+                                <span>✏️</span>
                             </button>
                         )}
                         {canDelete && (
-                            <button onClick={() => onDelete(comment.id)} className="action-button delete-button" title="Eliminar comentario">
-                                🗑️
+                            <button type="button" onClick={() => typeof onDelete === 'function' && onDelete(comment.id)} className="action-button delete" title="Eliminar comentario">
+                                <span>🗑️</span>
                             </button>
                         )}
                     </div>
                 )}
             </div>
-            <div className="comment-body">
+            <div className="comment-content">
                 {isEditing ? (
-                    <div className="comment-edit-form">
+                    <div className="add-comment-form" style={{ padding: '15px', marginTop: '10px' }}>
                         <textarea
                             ref={textareaRef}
                             value={editedText}
                             onChange={(e) => setEditedText(e.target.value)}
                             maxLength={500}
-                            className="comment-edit-textarea"
+                            className="comment-textarea"
                         />
-                        <div className="edit-controls">
-                            {/* Asegurarse de que editedText siempre sea un string para .length */}
-                            <span className="character-count-edit">{(editedText || '').length}/500</span>
-                            <button onClick={handleSaveEdit} className="save-edit-button">Guardar</button>
-                            <button onClick={handleCancelEdit} className="cancel-edit-button">Cancelar</button>
+                        <div className="comment-input-controls">
+                            <span className="character-count">{(editedText || '').length}/500</span>
+                            <div className="edit-button-group">
+                                <button type="button" onClick={handleSaveEdit} className="action-button save">Guardar</button>
+                                <button type="button" onClick={handleCancelEdit} className="action-button cancel-edit">Cancelar</button>
+                            </div>
                         </div>
                     </div>
                 ) : (
-                    // Asegurarse de que comment.texto sea un string para mostrar
                     <p>{comment.texto || 'No hay texto.'}</p>
                 )}
             </div>

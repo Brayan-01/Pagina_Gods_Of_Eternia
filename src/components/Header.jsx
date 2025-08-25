@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import infoIcon from '../assets/Info.png'; // Asegúrate de que la ruta sea correcta
+import SalirIcon from '../assets/Salir.png'; // Asegúrate de que la ruta sea correcta
 
 // Componente Dropdown ultra simplificado, ya que no hay submenús
 const SimpleDropdown = ({ items, onItemSelected }) => {
@@ -30,7 +31,7 @@ const SimpleDropdown = ({ items, onItemSelected }) => {
   return (
     <div className="dropdown-wrapper" ref={dropdownRef}>
       <button onClick={handleToggle} className="dropdown-button">
-        <span className="user-icon">👤</span>
+        <span className="user-icon">🤴🏽</span>
         <span className="dropdown-text">Mi Cuenta</span>
         <span className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>▼</span>
       </button>
@@ -64,10 +65,13 @@ function Header() {
   
   // Array de items simplificado sin "Ajustes"
   const dropdownItems = [
-    { id: "perfil", name: "Mi perfil", icon: "👤", url: "/player" },
-    { id: "cerrar", name: "Cerrar sesión", icon: "🚪" },
+    { id: "perfil", name: "Mi perfil", icon: "🤴🏽", url: "/player" },
+    { 
+      id: "cerrar", 
+      name: "Cerrar sesión", 
+      icon: <img src={SalirIcon} alt="Cerrar Sesión" className="nav-icon" /> 
+    },
   ];
-
   const handleDropdownSelect = (item) => {
     setIsMobileMenuOpen(false); // Cierra el menú móvil al seleccionar algo
     if (item.url) {

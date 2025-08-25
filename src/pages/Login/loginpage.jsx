@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -11,21 +10,18 @@ const Login = () => {
         document.title = 'Login | Gods Of Eternia';
     }, []);
 
-    // Estados del formulario de Login
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [isLoginLoading, setIsLoginLoading] = useState(false);
 
-    // Estados del modal de recuperación
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [resetEmail, setResetEmail] = useState("");
     const [resetMessage, setResetEmailMessage] = useState("");
     const [resetError, setResetError] = useState("");
     const [isResetLoading, setIsResetLoading] = useState(false);
 
-    // Estados para el flujo de recuperación en dos pasos
     const [resetStep, setResetStep] = useState('enterEmail');
     const [resetCode, setResetCode] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -34,14 +30,14 @@ const Login = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const navigate = useNavigate();
-    const { login, isAuthenticated } = useAuth(); // Obtiene login y isAuthenticated del contexto
+    const { login, isAuthenticated } = useAuth();
 
     const API_URL = import.meta.env.VITE_API_URL;
 
-    // Efecto para manejar la redirección después de la autenticación
+    // DESPUÉS (LA SOLUCIÓN)
     useEffect(() => {
         if (isAuthenticated && !isLoginLoading) {
-            navigate("/player");
+            navigate("/"); 
         }
     }, [isAuthenticated, isLoginLoading, navigate]);
 
@@ -63,7 +59,6 @@ const Login = () => {
         }
 
         try {
-            // CORRECCIÓN: Usar backticks para la interpolación del string
             const response = await fetch(`${API_URL}/login`, { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -73,8 +68,7 @@ const Login = () => {
             const data = await response.json();
 
             if (response.ok && data.access_token && data.refresh_token) {
-                login(data.access_token, data.refresh_token); // Pasa ambos tokens al login del contexto
-                // La redirección se maneja en el useEffect basado en isAuthenticated
+                login(data.access_token, data.refresh_token);
             } else {
                 setError(data.error || data.message || "Error al iniciar sesión");
             }
@@ -134,7 +128,6 @@ const Login = () => {
         }
 
         const apiFunction = async () => {
-            // CORRECCIÓN: Usar backticks para la interpolación del string
             const response = await fetch(`${API_URL}/request-password-reset`, { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -157,13 +150,15 @@ const Login = () => {
         e.preventDefault();
         setResetError("");
 
-        if (newPassword !== confirmPassword) {
-            setResetError("Las contraseñas no coinciden.");
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (!passwordRegex.test(newPassword)) {
+            setResetError("La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.");
             return;
         }
-        
-        if (newPassword.length < 6) { 
-            setResetError("La contraseña debe tener al menos 6 caracteres.");
+
+        if (newPassword !== confirmPassword) {
+            setResetError("Las contraseñas no coinciden.");
             return;
         }
 
@@ -173,12 +168,11 @@ const Login = () => {
         }
         
         const apiFunction = async () => {
-            // CORRECCIÓN: Usar backticks para la interpolación del string
             const response = await fetch(`${API_URL}/reset-password`, { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    reset_code: resetCode, 
+                    token: resetCode,            // ✅ cambio aquí
                     new_password: newPassword
                 }),
             });
@@ -242,6 +236,7 @@ const Login = () => {
                     ¿Olvidaste tu contraseña?
                 </div>
             </motion.div>
+
             <AnimatePresence>
                 {showForgotPassword && (
                     <motion.div

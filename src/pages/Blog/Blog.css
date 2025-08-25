@@ -15,8 +15,8 @@
 
 body {
   font-family: "MedievalSharp", cursive;
-  background: url("https://www.transparenttextures.com/patterns/old-map.png"),
-    linear-gradient(135deg, #2b1d0f, #593d1b);
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+  url('/fondo_1.png') no-repeat center center fixed;
   color: #f0f0f0;
   margin: 0;
   padding: 0;
@@ -50,7 +50,7 @@ body {
 
 .blog-header h1 {
   font-family: "Cinzel", serif;
-  font-size: clamp(24px, 5vw, 42px); /* Responsivo con clamp */
+  font-size: clamp(24px, 5vw, 42px);
   margin: 0;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
   text-align: center;
@@ -101,28 +101,31 @@ body {
   align-self: flex-start;
 }
 
-/* --- Barra de navegación de Categorías --- */
+/* --- Barra de navegación de Categorías MEJORADA --- */
 .category-navbar {
   display: flex;
-  flex-wrap: wrap; 
-  justify-content: center; 
-  gap: 10px; 
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
   width: 100%;
   max-width: 900px;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 15px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  border: 1px solid #c4a484;
-  margin-bottom: 30px; 
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)),
+              url("https://www.transparenttextures.com/patterns/old-map.png");
+  padding: 15px;
+  border-top: 2px solid #c4a484;
+  border-bottom: 2px solid #c4a484;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 30px;
+  border-radius: 6px;
 }
 
+/* --- Botones de Categoría con Estilo de Placa/Estandarte --- */
 .category-button {
-  background: #593d1b;
+  background: linear-gradient(145deg, #6a4f29, #4a2f10);
   color: #f0f0f0;
-  border: 1px solid #ffd700;
-  padding: 10px 16px;
-  border-radius: 20px;
+  border: 1px solid #c4a484;
+  padding: 10px 18px;
+  border-radius: 4px;
   font-family: "Cinzel", serif;
   font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
@@ -130,22 +133,29 @@ body {
   transition: all 0.3s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  min-width: fit-content;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+              inset 0 1px 1px rgba(255, 215, 0, 0.1);
 }
 
 .category-button:hover:not(.active) {
-  background: #ffd700;
+  background: linear-gradient(145deg, #ffd700, #f0c340);
   color: #2b1d0f;
-  transform: translateY(-2px);
+  border-color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4),
+              inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .category-button.active {
-  background: #ffd700;
+  background: linear-gradient(145deg, #ffd700, #f0c340);
   color: #2b1d0f;
   border-color: #ffd700;
   font-weight: 700;
-  transform: scale(1.03);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+  transform: scale(1.02);
 }
+
 
 /* === ESTILOS PARA POSTS === */
 .blog-post {
@@ -188,9 +198,9 @@ body {
 }
 
 .post-author { color: #ffd700; }
-.post-date { 
+.post-date {
   color: rgba(255, 255, 255, 0.6);
-  order: 3; /* En móvil irá al final */
+  order: 3;
 }
 .post-category {
   background: rgba(0, 0, 0, 0.2);
@@ -315,7 +325,7 @@ body {
 .post-actions-bar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   gap: 15px;
   padding: 20px 0;
@@ -335,7 +345,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   background: transparent;
   border: 2px solid #c4a484;
   color: #c4a484;
@@ -344,7 +354,7 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: "Cinzel", serif;
-  font-size: clamp(11px, 2vw, 13px);
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
@@ -491,7 +501,7 @@ body {
   align-items: center;
   gap: 12px;
   flex: 1;
-  min-width: 0; /* Para permitir que el texto se corte si es necesario */
+  min-width: 0;
 }
 
 .comment-author-avatar {
@@ -523,6 +533,16 @@ body {
   flex-shrink: 0;
 }
 
+.comment-edited-tag {
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  font-size: 0.8em;
+  margin-left: 8px;
+}
+
+.cancel-button {
+    padding: clamp(8px, 2vw, 10px) clamp(20px, 4vw, 25px);
+}
 .comment-controls {
   display: flex;
   align-items: center;
@@ -530,10 +550,103 @@ body {
   flex-shrink: 0;
 }
 
-/* SE APLICA LA CLASE .action-button A LOS CONTROLES DEL COMENTARIO */
 .comment-controls .action-button {
   padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 10px);
   font-size: clamp(10px, 1.8vw, 12px);
+}
+
+/* --- ESTILO MEDIEVAL PARA BOTONES DE EDITAR/BORRAR COMENTARIO --- */
+.comment-controls .action-button {
+  font-family: "Cinzel", serif;
+  background: #593d1b;
+  color: #ffd700;
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+
+.comment-controls .action-button:hover:not(:disabled) {
+  background: #ffd700;
+  color: #2b1d0f;
+  border-color: #ffd700;
+  transform: scale(1.05);
+}
+
+/* --- UBICACIÓN RESPONSIVE DE LOS BOTONES DE COMENTARIO --- */
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.comment-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto; /* SIEMPRE A LA DERECHA */
+}
+
+@media (max-width: 768px) {
+  .comment-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .comment-controls {
+    margin-left: auto;
+    margin-top: 0;
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .comment-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+  .comment-controls {
+    margin-left: auto;
+    margin-top: 0;
+    align-self: center;
+    gap: 6px;
+  }
+  .comment-controls .action-button {
+    font-size: 12px;
+    padding: 7px 11px;
+  }
+
+  /* Centra y ajusta los botones de la sección de comentarios */
+  .comment-controls {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0;
+    align-self: center;
+  }
+
+  .comment-controls .action-button {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    padding: 10px 0;
+    box-sizing: border-box;
+  }
+
+  /* Si tienes otros botones personalizados en comentarios, también los puedes centrar así */
+  .comment-submit-button,
+  .cancel-button {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+  }
 }
 
 .comment-content {
@@ -543,6 +656,11 @@ body {
   white-space: pre-wrap;
   word-break: break-word;
   hyphens: auto;
+}
+
+.input-group select option {
+  background: #2a2a2a; /* Un fondo oscuro para las opciones */
+  color: #f0f0f0;      /* Un color de texto claro para que contraste */
 }
 
 /* --- FORMULARIO PARA AÑADIR COMENTARIOS MEJORADO --- */
@@ -737,18 +855,26 @@ body {
   background-color: #dc3545;
   color: white;
   border: none;
-  padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 15px);
+  width: auto;
+  min-width: unset;
+  max-width: 100%;
+  padding-inline: 1em;
+  padding-block: 0.5em;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 10px;
-  font-size: clamp(11px, 2vw, 13px);
+  margin-top: 15px;           /* Más espacio debajo de la imagen */
+  margin-left: auto;          /* Centrado horizontal */
+  margin-right: auto;         /* Centrado horizontal */
+  display: block;             /* Ocupa toda la línea y se centra */
+  font-size: 12px;
   transition: background-color 0.3s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .clear-image-button:hover {
   background-color: #c82333;
 }
-
 .button-group {
   display: flex;
   justify-content: flex-end;
@@ -770,9 +896,7 @@ body {
   transition: all 0.3s ease;
   text-transform: uppercase;
   white-space: nowrap;
-  min-width: -webkit-fill-available; /* Safari / Samsung Internet viejos */
-  min-width: max-content;            /* fallback más amplio */
-  min-width: fit-content;            
+  min-width: fit-content;
 }
 
 
@@ -857,22 +981,22 @@ body {
     padding: 15px;
     padding-top: 80px;
   }
-  
+
   .post-list-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
   }
-  
+
   .blog-header {
     flex-direction: column;
     text-align: center;
     gap: 15px;
   }
-  
+
   .blog-header h1 {
     order: 1;
   }
-  
+
   .create-new-post-button {
     order: 2;
   }
@@ -915,33 +1039,14 @@ body {
     gap: 8px;
   }
 
-  .post-date {
-    order: 1;
-  }
-
-  .post-author {
-    order: 2;
-  }
-
-  .post-category {
-    order: 3;
-    align-self: flex-start;
-  }
+  .post-date { order: 1; }
+  .post-author { order: 2; }
+  .post-category { order: 3; align-self: flex-start; }
 
   .post-actions-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-  }
-
-  .user-interactions {
-    order: 1;
-    justify-content: flex-start;
-  }
-
-  .owner-actions {
-    order: 2;
-    justify-content: flex-end;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .comment-header {
@@ -1033,27 +1138,43 @@ body {
     gap: 12px;
   }
 
+  /* --- INICIO DE LA MODIFICACIÓN PARA BOTONES RESPONSIVE --- */
+  /* Hacemos que los contenedores de acciones se distribuyan */
   .owner-actions,
   .user-interactions {
-    gap: 8px;
+    gap: 12px;
   }
 
-  /* Simplificar botones en móvil - mostrar solo iconos */
-  .action-button {
-    padding: 8px;
-    gap: 4px;
-    min-width: 40px;
-    justify-content: center;
+  /* El contenedor de "Me gusta" se queda a la izquierda */
+  .user-interactions {
+    justify-content: flex-start;
+    flex-grow: 1; /* Permite que ocupe el espacio sobrante */
   }
 
-  .action-button span {
-    display: none;
+  /* El contenedor de "Editar/Eliminar" se va a la derecha */
+  .owner-actions {
+    justify-content: flex-end;
   }
-
-  .like-button {
+  
+  /* Estilo base para TODOS los botones de acción en móvil, asegurando que el texto sea visible */
+  .action-button, .like-button {
     padding: 8px 12px;
-    gap: 6px;
+    gap: 8px;
+    flex-grow: 0;      /* Evita que crezcan para rellenar espacio */
+    flex-shrink: 0;    /* Evita que se encojan */
   }
+
+  /* Ajuste específico para el botón de Like */
+  .like-button {
+    font-size: 13px;
+  }
+
+  /* Ajuste específico para los botones de Editar y Eliminar */
+  .action-button {
+    font-size: 12px;
+  }
+  /* --- FIN DE LA MODIFICACIÓN --- */
+
 
   .interaction-count {
     font-size: 12px;
@@ -1158,12 +1279,7 @@ body {
     gap: 6px;
   }
 
-  .action-button {
-    padding: 6px;
-    min-width: 36px;
-  }
-
-  .like-button {
+  .action-button, .like-button {
     padding: 6px 10px;
   }
 
@@ -1181,15 +1297,15 @@ body {
   .blog-container {
     padding-top: 40px;
   }
-  
+
   .create-post-modal-content {
     max-height: 85vh;
   }
-  
+
   .blog-post-card {
     min-height: 250px;
   }
-  
+
   .card-image-container {
     height: 120px;
   }
@@ -1202,23 +1318,10 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  
-  .blog-post-card:hover {
-    transform: none;
-  }
-  
-  .action-button:hover:not(:disabled) {
-    transform: none;
-  }
-  
-  .like-button:hover:not(:disabled) {
-    transform: none;
-  }
-}
 
-/* Mejoras para modo oscuro del sistema */
-@media (prefers-color-scheme: dark) {
-  /* Los estilos ya están optimizados para modo oscuro */
+  .blog-post-card:hover { transform: none; }
+  .action-button:hover:not(:disabled) { transform: none; }
+  .like-button:hover:not(:disabled) { transform: none; }
 }
 
 /* Mejoras para alto contraste */
@@ -1228,13 +1331,13 @@ body {
   .blog-post-card {
     border-width: 3px;
   }
-  
+
   .action-button,
   .like-button,
   .category-button {
     border-width: 2px;
   }
-  
+
   .comment {
     border-left-width: 6px;
   }
@@ -1251,7 +1354,7 @@ body {
   .add-comment-form {
     display: none;
   }
-  
+
   .blog-post,
   .create-post-container {
     box-shadow: none;
@@ -1259,9 +1362,62 @@ body {
     background: white !important;
     color: black !important;
   }
-  
+
   .post-title,
   .blog-header h1 {
     color: black !important;
   }
+}
+
+.edit-button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-button-group .action-button {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 5px;
+  text-transform: none;
+}
+
+.edit-button-group .action-button.save {
+  background: #ffd700;
+  border-color: #ffd700;
+  color: #2b1d0f;
+}
+
+.edit-button-group .action-button.save:hover:not(:disabled) {
+  background: #593d1b;
+  color: #ffd700;
+  transform: scale(1.05);
+}
+
+.edit-button-group .action-button.cancel-edit {
+  background: transparent;
+  border-color: #c4a484;
+  color: #f0f0f0;
+}
+
+.edit-button-group .action-button.cancel-edit:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #f0f0f0;
+}
+
+.action-button,
+.like-button,
+.save-button,
+.cancel-button,
+.comment-submit-button,
+.create-new-post-button,
+.back-to-list-button,
+.back-to-list-button-inline {
+  width: auto;                /* Autoajuste al contenido */
+  min-width: unset;           /* Elimina restricciones previas */
+  max-width: 100%;            /* Evita desbordes */
+  padding-inline: 1em;        /* Padding lateral adaptable */
+  white-space: nowrap;        /* No saltar línea */
+  box-sizing: border-box;     /* Incluye padding en el ancho */
 }
