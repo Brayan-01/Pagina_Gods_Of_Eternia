@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -172,7 +173,8 @@ const Login = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    token: resetCode,            // ✅ cambio aquí
+                    email: resetEmail,      
+                    token: resetCode,
                     new_password: newPassword
                 }),
             });

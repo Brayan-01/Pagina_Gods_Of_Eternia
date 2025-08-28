@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const CreatePost = ({ onPostCreated, postToEdit, onCancelEdit, onCancelCreate, showNotification, currentUser, categories }) => {
-    // --- ESTADOS INTERNOS DEL FORMULARIO ---
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [imageFile, setImageFile] = useState(null);
@@ -12,16 +11,17 @@ const CreatePost = ({ onPostCreated, postToEdit, onCancelEdit, onCancelCreate, s
 
     const isEditing = !!postToEdit;
 
-    // Efecto para rellenar o limpiar el formulario
     useEffect(() => {
         if (isEditing && postToEdit) {
             setTitle(postToEdit.titulo || '');
-            setContent(postToEdit.content || '');
-            setSelectedCategoryId(postToEdit.categoria_id || '');
-            setImagePreview(postToEdit.imageUrl || '');
-            setImageFile(null); // Limpiar el archivo para nueva subida
+            setContent(postToEdit.texto || ''); 
+            setSelectedCategoryId(postToEdit.categoria_id || postToEdit.categoria?.id || '');
+            setImagePreview(
+                postToEdit.imagen_url || 
+                (postToEdit.imagenes && postToEdit.imagenes.length > 0 ? postToEdit.imagenes[0].url : '') || ''
+            );
+            setImageFile(null);
         } else {
-            // Limpiar el formulario para creación
             setTitle('');
             setContent('');
             setImageFile(null);
@@ -34,7 +34,7 @@ const CreatePost = ({ onPostCreated, postToEdit, onCancelEdit, onCancelCreate, s
     }, [isEditing, postToEdit]);
 
     const API_URL = import.meta.env.VITE_API_URL;
-    const token = localStorage.getItem('access_token'); // Asegúrate de usar 'access_token' para compatibilidad
+    const token = localStorage.getItem('access_token');
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -83,42 +83,32 @@ const CreatePost = ({ onPostCreated, postToEdit, onCancelEdit, onCancelCreate, s
         formData.append('titulo', title);
         formData.append('texto', content);
         formData.append('categoria_id', selectedCategoryId);
+
         if (imageFile) {
-            formData.append('imageFile', imageFile);
+            formData.append('imagen', imageFile); 
         }
 
         const method = isEditing ? 'PUT' : 'POST';
-        // CORRECCIÓN ESTRICTAMENTE NECESARIA: Añadir backticks para la interpolación de la URL
-        const urlPath = isEditing ? `/user/editar-publicacion/${postToEdit.id}` : '/user/crear-publicacion';
+        const urlPath = isEditing ? `/blog/editar-publicacion/${postToEdit.id}` : '/blog/crear-publicacion';
         const successMessage = isEditing ? 'Crónica actualizada exitosamente!' : 'Crónica publicada exitosamente!';
         const errorMessage = isEditing ? 'Error al actualizar la crónica.' : 'Error al publicar la crónica.';
 
         try {
             const url = new URL(urlPath, API_URL);
             const response = await fetch(url.href, {
-                method: method,
-                headers: {
-                    // CORRECCIÓN ESTRICTAMENTE NECESARIA: Añadir backticks para la interpolación del token
-                    'Authorization': `Bearer ${token}`, 
-                },
+                method,
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
 
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || errorMessage);
-            }
+            if (!response.ok) throw new Error(data.error || errorMessage);
 
             showNotification(successMessage, 'success');
-            
-            if (!isEditing) {
-                // CORRECCIÓN ESTRICTAMENTE NECESARIA: Llamar a onPostCreated sin argumentos
-                onPostCreated(); 
-            }
-            
-            handleCancel(); // Cierra el modal y limpia el formulario
 
+            if (!isEditing) onPostCreated();
+
+            handleCancel();
         } catch (error) {
             console.error("Error en handleSubmit:", error);
             showNotification(error.message || errorMessage, 'error');

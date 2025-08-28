@@ -1,6 +1,4 @@
-/* Es buena práctica poner los @import al inicio del archivo */
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=MedievalSharp&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap');
 *,
 *::before,
 *::after {
@@ -50,6 +48,7 @@ body {
 
 .blog-header h1 {
   font-family: "Cinzel", serif;
+  font-size: 24px; /* Fallback para navegadores antiguos */
   font-size: clamp(24px, 5vw, 42px);
   margin: 0;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
@@ -62,6 +61,7 @@ body {
 .create-new-post-button,
 .back-to-list-button,
 .back-to-list-button-inline {
+  font-size: 14px; /* Fallback para navegadores antiguos */
   padding: 12px 25px;
   font-family: "Cinzel", serif;
   font-size: clamp(14px, 2.5vw, 16px);
@@ -76,6 +76,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   white-space: nowrap;
   text-align: center;
+  min-width: -webkit-fill-available;
   min-width: fit-content;
 }
 
@@ -127,6 +128,7 @@ body {
   padding: 10px 18px;
   border-radius: 4px;
   font-family: "Cinzel", serif;
+  font-size: 12px; /* Fallback para navegadores antiguos */
   font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   cursor: pointer;
@@ -158,77 +160,9 @@ body {
 
 
 /* === ESTILOS PARA POSTS === */
-.blog-post {
-  background: linear-gradient(rgba(155, 126, 32, 0.9), rgba(119, 75, 31, 0.9));
-  padding: clamp(20px, 4vw, 30px);
-  border-radius: 12px;
-  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 800px;
-  border: 3px solid #c4a484;
-  margin-bottom: 20px;
-}
-
-.post-header {
-  margin-bottom: 25px;
-  border-bottom: 2px solid rgba(196, 164, 132, 0.5);
-  padding-bottom: 20px;
-}
-
-.post-title {
-  color: white;
-  font-size: clamp(20px, 4vw, 28px);
-  margin: 0 0 15px 0;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
-  font-family: "Cinzel", serif;
-  line-height: 1.2;
-  word-wrap: break-word;
-  hyphens: auto;
-}
-
-.post-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: clamp(12px, 2vw, 14px);
-  font-family: "Cinzel", serif;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.post-author { color: #ffd700; }
-.post-date {
-  color: rgba(255, 255, 255, 0.6);
-  order: 3;
-}
-.post-category {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  font-size: clamp(10px, 2vw, 12px);
-  color: #ffd700;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-.post-image-container {
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-.post-image {
-  width: 100%;
-  max-height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #ffd700;
-}
-
-/* --- LISTA DE PUBLICACIONES --- */
 .post-list-grid {
   display: grid;
+  gap: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: clamp(1.5rem, 4vw, 2.5rem);
   padding: clamp(1.5rem, 4vw, 2.5rem) 0;
@@ -238,90 +172,311 @@ body {
 }
 
 .blog-post-card {
-  background: linear-gradient(rgba(155, 126, 32, 0.95), rgba(119, 75, 31, 0.95));
-  border-radius: 12px;
-  border: 3px solid #c4a484;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  background: 
+    linear-gradient(135deg, 
+      rgba(180, 146, 75, 0.95) 0%, 
+      rgba(139, 102, 66, 0.95) 35%,
+      rgba(101, 72, 45, 0.95) 70%,
+      rgba(74, 48, 28, 0.98) 100%
+    );
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  min-height: 350px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-height: 420px;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(180, 146, 75, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.blog-post-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 215, 0, 0.1) 0%,
+    transparent 50%,
+    rgba(255, 215, 0, 0.05) 100%
+  );
+  border-radius: 16px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.blog-post-card::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg,
+    #57492f, 
+    #8d8860, 
+    #d4af37, 
+    #c0a062
+  );
+  background-size: 300% 300%;
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 0;
+  animation: gradientShift 4s ease infinite;
+  transition: opacity 0.3s ease;
 }
 
 .blog-post-card:hover {
-  transform: translateY(-5px);
-  border-color: #ffd700;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.4),
+    0 5px 20px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.blog-post-card:hover::before {
+  opacity: 1;
+}
+
+.blog-post-card:hover::after {
+  opacity: 1;
 }
 
 .card-image-container {
+  height: clamp(200px, 25vw, 240px);
   width: 100%;
-  height: clamp(180px, 25vw, 220px);
   overflow: hidden;
+  position: relative;
+  border-radius: 14px 14px 0 0;
 }
 
 .card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  filter: contrast(1.1) saturate(0.9);
 }
 
 .blog-post-card:hover .card-image {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: contrast(1.2) saturate(1.1) brightness(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.1) 40%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+.category-tag {
+  background: rgba(255, 215, 0, 0.9);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #1f1611;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-10px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.blog-post-card:hover .category-tag {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .card-content {
-  padding: clamp(1.25rem, 3vw, 1.75rem);
+  padding: clamp(1.5rem, 3vw, 2rem);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  gap: 1.25rem;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(240, 240, 240, 0.8);
+  font-size: 0.8rem;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+}
+
+.meta-item svg {
+  color: #ffd700;
+  flex-shrink: 0;
 }
 
 .card-title {
-  font-size: clamp(1.125rem, 3vw, 1.375rem);
+  font-family: "Cormorant Garamond", serif;
+  color: #FDF6E3; 
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
   font-weight: 700;
-  color: #f0f0f0;
-  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   line-height: 1.3;
+  margin: 0;
   word-wrap: break-word;
+  -webkit-hyphens: auto;
   hyphens: auto;
+  flex-grow: 1;
+  transition: color 0.3s ease;
+}
+
+.blog-post-card:hover .card-title {
+  color: #4A2F1C;
 }
 
 .view-more-button {
-  background: #593d1b;
-  color: #f0f0f0;
-  border: 2px solid #ffd700;
-  padding: clamp(0.75rem, 2vw, 0.875rem) clamp(1rem, 2.5vw, 1.25rem);
+  background: linear-gradient(135deg, 
+    #6b4423 0%, 
+    #8b5a3c 50%, 
+    #6b4423 100%
+  );
+  color: #f8fafc;
+  padding: clamp(0.875rem, 2vw, 1rem) clamp(1.25rem, 2.5vw, 1.5rem);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: clamp(0.875rem, 2vw, 0.95rem);
+  font-family: "Cinzel", serif;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   margin-top: auto;
   align-self: flex-start;
-  border-radius: 6px;
-  font-size: clamp(12px, 2vw, 14px);
-  font-family: "Cinzel", serif;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.view-more-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 215, 0, 0.4), 
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.view-more-button:hover::before {
+  left: 100%;
 }
 
 .view-more-button:hover {
-  background: #ffd700;
-  color: #2b1d0f;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, 
+    #ffd700 0%, 
+    #ffed4e 50%, 
+    #fbbf24 100%
+  );
+  color: #1f1611;
+  border-color: #ffd700;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(255, 215, 0, 0.4),
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* --- Contenido del Post --- */
+.button-icon {
+  transition: transform 0.3s ease;
+}
+
+.view-more-button:hover .button-icon {
+  transform: translateX(3px);
+}
+
+.view-more-button:focus {
+  outline: none;
+  box-shadow: 
+    0 8px 25px rgba(255, 215, 0, 0.4),
+    0 0 0 3px rgba(255, 215, 0, 0.3);
+}
+
+.blog-post-card {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.blog-post-card:nth-child(1) { animation-delay: 0.1s; }
+.blog-post-card:nth-child(2) { animation-delay: 0.2s; }
+.blog-post-card:nth-child(3) { animation-delay: 0.3s; }
+.blog-post-card:nth-child(4) { animation-delay: 0.4s; }
+.blog-post-card:nth-child(5) { animation-delay: 0.5s; }
+.blog-post-card:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.blog-post-card:focus-within {
+  outline: 3px solid rgba(255, 215, 0, 0.6);
+  outline-offset: 2px;
+}
+
 .post-content {
+  font-size: 14px;
   color: #f0f0f0;
   font-size: clamp(14px, 2.5vw, 16px);
   line-height: 1.7;
   white-space: pre-wrap;
   word-break: break-word;
+  -webkit-hyphens: auto;
   hyphens: auto;
 }
 
-/* === BARRA DE ACCIONES Y BOTONES UNIFICADOS === */
 .post-actions-bar {
   display: flex;
   justify-content: space-between;
@@ -340,7 +495,6 @@ body {
   gap: 12px;
 }
 
-/* ESTILO ÚNICO Y DEFINITIVO PARA TODOS LOS BOTONES DE ACCIÓN */
 .action-button {
   display: inline-flex;
   align-items: center;
@@ -348,12 +502,14 @@ body {
   gap: 8px;
   background: transparent;
   border: 2px solid #c4a484;
+  padding: 6px 12px;
   color: #c4a484;
   padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 15px);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: "Cinzel", serif;
+  font-size: 12px;
   font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   line-height: 1;
@@ -376,19 +532,20 @@ body {
   border-color: #ff6b6b;
 }
 
-/* BOTÓN DE LIKE REDISEÑADO */
 .like-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background: rgba(0, 0, 0, 0.2);
   border: 2px solid #c4a484;
+  padding: 6px 12px;
   color: #c4a484;
   padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 16px);
   border-radius: 50px;
   cursor: pointer;
   font-family: "Cinzel", serif;
   font-weight: 700;
+  font-size: 12px;
   font-size: clamp(12px, 2vw, 14px);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   white-space: nowrap;
@@ -431,6 +588,7 @@ body {
 }
 
 .interaction-count {
+  font-size: 12px;
   font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   display: flex;
@@ -441,11 +599,11 @@ body {
 
 .interaction-count .icon {
   margin-right: 8px;
+  font-size: 16px;
   font-size: clamp(16px, 3vw, 18px);
 }
 
 
-/* === SECCIÓN DE COMENTARIOS === */
 .comments-section {
   border-top: 2px solid rgba(196, 164, 132, 0.3);
   padding-top: 25px;
@@ -455,6 +613,7 @@ body {
 .comments-section h3 {
   color: #ffd700;
   font-family: "Cinzel", serif;
+  font-size: 18px;
   font-size: clamp(18px, 3.5vw, 22px);
   margin: 0 0 25px 0;
 }
@@ -470,6 +629,7 @@ body {
   padding: 20px;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
+  font-size: 14px;
   border: 1px dashed rgba(196, 164, 132, 0.3);
   font-size: clamp(14px, 2.5vw, 16px);
 }
@@ -481,6 +641,9 @@ body {
   margin-bottom: 15px;
   border-left: 4px solid #c4a484;
   transition: border-color 0.3s ease;
+  max-width: 100%;
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
 .comment:hover {
@@ -505,6 +668,7 @@ body {
 }
 
 .comment-author-avatar {
+  width: 35px;
   width: clamp(35px, 6vw, 40px);
   height: clamp(35px, 6vw, 40px);
   border-radius: 50%;
@@ -516,6 +680,7 @@ body {
 .comment-author {
   color: #ffd700;
   font-weight: bold;
+  font-size: 12px;
   font-size: clamp(12px, 2.5vw, 14px);
   word-wrap: break-word;
 }
@@ -523,11 +688,13 @@ body {
 .verified-badge {
   color: #28a745;
   font-weight: bold;
+  font-size: 10px;
   margin-left: 5px;
   font-size: clamp(10px, 2vw, 12px);
 }
 
 .comment-date {
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.5);
   font-size: clamp(10px, 2vw, 12px);
   flex-shrink: 0;
@@ -541,129 +708,308 @@ body {
 }
 
 .cancel-button {
+    padding: 8px 20px;
     padding: clamp(8px, 2vw, 10px) clamp(20px, 4vw, 25px);
 }
-.comment-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
+/* Base comment controls styling */
+/* Improved responsive styles for comment controls */
 
-.comment-controls .action-button {
-  padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 10px);
-  font-size: clamp(10px, 1.8vw, 12px);
-}
+/* Base comment controls styling */
+/* Improved responsive styles for comment controls */
 
-/* --- ESTILO MEDIEVAL PARA BOTONES DE EDITAR/BORRAR COMENTARIO --- */
-.comment-controls .action-button {
-  font-family: "Cinzel", serif;
-  background: #593d1b;
-  color: #ffd700;
-  border: 2px solid #ffd700;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-  transition: all 0.3s ease;
-}
+/* Base comment controls styling */
+/* Improved responsive styles for comment controls */
 
-.comment-controls .action-button:hover:not(:disabled) {
-  background: #ffd700;
-  color: #2b1d0f;
-  border-color: #ffd700;
-  transform: scale(1.05);
-}
-
-/* --- UBICACIÓN RESPONSIVE DE LOS BOTONES DE COMENTARIO --- */
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
+/* Base comment controls styling */
 .comment-controls {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: auto; /* SIEMPRE A LA DERECHA */
+  flex-shrink: 0;
+  margin-top: 8px;
+  flex-wrap: wrap;
 }
 
+.comment-controls .action-button {
+  padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 16px);
+  font-size: clamp(11px, 2vw, 13px);
+  font-family: "Cinzel", serif;
+  font-weight: 600;
+  background: linear-gradient(135deg, #3a2e1c 0%, #2c1f0f 100%);
+  color: #d4af37;
+  border: 1px solid #8b6914;
+  border-radius: 20px;
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 215, 0, 0.1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  white-space: nowrap;
+  min-width: fit-content;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.comment-controls .action-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.comment-controls .action-button:hover::before {
+  left: 100%;
+}
+
+.comment-controls .action-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  color: #1a0f08;
+  border-color: #ffd700;
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 
+    0 5px 12px rgba(255, 215, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.comment-controls .action-button.edit {
+  border-color: #4a90e2;
+  color: #87ceeb;
+}
+
+.comment-controls .action-button.edit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #87ceeb 0%, #4a90e2 100%);
+  color: #1a1a1a;
+  border-color: #87ceeb;
+}
+
+.comment-controls .action-button.delete {
+  border-color: #e74c3c;
+  color: #ff6b6b;
+}
+
+.comment-controls .action-button.delete:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff6b6b 0%, #e74c3c 100%);
+  color: #1a1a1a;
+  border-color: #ff6b6b;
+}
+
+/* Edit button group for inline editing */
+.edit-button-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.edit-button-group .action-button {
+  padding: clamp(8px, 2vw, 12px) clamp(18px, 3vw, 24px);
+  font-size: clamp(12px, 2.5vw, 14px);
+  font-weight: 600;
+  border-radius: 25px;
+  text-transform: none;
+  min-width: fit-content;
+  flex-shrink: 0;
+  font-family: "Cinzel", serif;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.edit-button-group .action-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.edit-button-group .action-button:hover::before {
+  left: 100%;
+}
+
+.edit-button-group .action-button.save {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: 2px solid #28a745;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.edit-button-group .action-button.save:hover:not(:disabled) {
+  background: linear-gradient(135deg, #34ce57 0%, #2dd4aa 100%);
+  border-color: #34ce57;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(40, 167, 69, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.edit-button-group .action-button.cancel-edit {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  border: 2px solid #6c757d;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.edit-button-group .action-button.cancel-edit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7c858d 0%, #6a7278 100%);
+  border-color: #7c858d;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(108, 117, 125, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile-first responsive adjustments */
 @media (max-width: 768px) {
   .comment-header {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
+
   .comment-controls {
-    margin-left: auto;
-    margin-top: 0;
-    align-self: center;
+    align-self: flex-end;
+    margin-top: 8px;
+    gap: 6px;
+  }
+
+  .comment-controls .action-button {
+    padding: 4px 10px;
+    font-size: 10px;
+    min-width: 50px;
+    border-radius: 15px;
+  }
+
+  .edit-button-group {
+    gap: 8px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .edit-button-group .action-button {
+    padding: 6px 12px;
+    font-size: 11px;
+    min-width: 55px;
+    border-radius: 18px;
   }
 }
 
 @media (max-width: 480px) {
   .comment-header {
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-  }
-  .comment-controls {
-    margin-left: auto;
-    margin-top: 0;
-    align-self: center;
-    gap: 6px;
-  }
-  .comment-controls .action-button {
-    font-size: 12px;
-    padding: 7px 11px;
-  }
-
-  /* Centra y ajusta los botones de la sección de comentarios */
-  .comment-controls {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 8px;
-    width: 100%;
-    margin-left: 0;
-    margin-top: 0;
-    align-self: center;
+  }
+
+  .comment-controls {
+    gap: 4px;
+    width: auto;
+    justify-content: flex-end;
+    flex-wrap: nowrap; /* Force buttons to stay on same line */
   }
 
   .comment-controls .action-button {
-    width: 100%;
-    text-align: center;
-    font-size: 13px;
-    padding: 10px 0;
-    box-sizing: border-box;
+    padding: 3px 8px;
+    font-size: 9px;
+    min-width: 45px;
+    border-radius: 12px;
+    border-width: 1px;
+    flex-shrink: 1; /* Allow some shrinking if needed */
   }
 
-  /* Si tienes otros botones personalizados en comentarios, también los puedes centrar así */
-  .comment-submit-button,
-  .cancel-button {
-    width: 100%;
-    text-align: center;
-    margin: 0 auto;
+  .edit-button-group {
+    gap: 6px;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: nowrap; /* Force buttons to stay on same line */
+  }
+
+  .edit-button-group .action-button {
+    padding: 5px 10px;
+    font-size: 10px;
+    min-width: 50px;
+    border-radius: 15px;
+    border-width: 1px;
+    flex-shrink: 1; /* Allow some shrinking if needed */
+  }
+}
+
+@media (max-width: 360px) {
+  .comment-controls {
+    gap: 3px;
+    flex-wrap: nowrap; /* Keep buttons side by side */
+  }
+
+  .comment-controls .action-button {
+    padding: 2px 6px;
+    font-size: 8px;
+    min-width: 35px; /* Reduced further to fit side by side */
+    border-radius: 10px;
+    flex-shrink: 1;
+  }
+
+  .edit-button-group {
+    gap: 4px;
+    flex-wrap: nowrap; /* Keep buttons side by side */
+  }
+
+  .edit-button-group .action-button {
+    padding: 4px 8px;
+    font-size: 9px;
+    min-width: 40px; /* Reduced to fit side by side */
+    border-radius: 12px;
+    flex-shrink: 1;
+  }
+}
+
+/* Ensure touch targets are adequate */
+@media (hover: none) and (pointer: coarse) {
+  .comment-controls .action-button,
+  .edit-button-group .action-button {
+    min-height: 32px; /* Reduced from 44px for mobile */
+    min-width: 32px;
+    padding: 6px 12px;
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .comment-controls .action-button,
+  .edit-button-group .action-button {
+    border-width: 2px;
+    font-weight: 700;
   }
 }
 
 .comment-content {
-  color: #f0f0f0;
   font-size: clamp(13px, 2.2vw, 14px);
+  color: #f0f0f0;
   line-height: 1.6;
   white-space: pre-wrap;
+  word-wrap: break-word;
   word-break: break-word;
+  overflow-wrap: break-word;
   hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  max-width: 100%;
+  overflow: hidden;
 }
 
-.input-group select option {
-  background: #2a2a2a; /* Un fondo oscuro para las opciones */
-  color: #f0f0f0;      /* Un color de texto claro para que contraste */
-}
-
-/* --- FORMULARIO PARA AÑADIR COMENTARIOS MEJORADO --- */
+/* Comment form and textarea styling */
 .add-comment-form {
   margin-top: 25px;
   padding: clamp(15px, 3vw, 20px);
@@ -694,6 +1040,11 @@ body {
   border-color: #ffd700;
   outline: none;
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.4), inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.comment-textarea::placeholder {
+  color: rgba(240, 240, 240, 0.6);
+  font-style: italic;
 }
 
 .comment-input-controls {
@@ -751,9 +1102,59 @@ body {
   border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
-/* === FORMULARIO DE CREACIÓN === */
+.character-count {
+  font-size: 10px;
+  font-size: clamp(10px, 2vw, 12px);
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Cinzel", serif;
+}
+
+.comment-submit-button {
+  background: #ffd700;
+  color: #2b1d0f;
+  border: 2px solid #ffd700;
+  padding: 8px 20px;
+  padding: clamp(8px, 2vw, 10px) clamp(20px, 4vw, 25px);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-size: clamp(12px, 2.2vw, 14px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  white-space: nowrap;
+}
+
+.comment-submit-button:hover:not(:disabled) {
+  background: #593d1b;
+  color: #ffd700;
+  transform: scale(1.05);
+}
+
+.comment-submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.verification-warning,
+.login-prompt {
+  color: #ffd700;
+  font-style: italic;
+  margin-top: 15px;
+  font-size: 12px;
+  font-size: clamp(12px, 2.2vw, 14px);
+  text-align: center;
+  padding: 10px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
 .create-post-container {
   background: linear-gradient(rgba(155, 126, 32, 0.9), rgba(119, 75, 31, 0.9));
+  padding: 25px;
   padding: clamp(25px, 4vw, 40px);
   border-radius: 12px;
   box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.5);
@@ -764,6 +1165,7 @@ body {
 
 .create-post-container h2 {
   color: white;
+  font-size: 22px;
   font-size: clamp(22px, 4vw, 28px);
   margin-top: 0;
   margin-bottom: 25px;
@@ -781,6 +1183,7 @@ body {
 .input-group label {
   display: block;
   color: #ffd700;
+  font-size: 14px;
   margin-bottom: 10px;
   font-size: clamp(14px, 2.5vw, 16px);
   font-family: "Cinzel", serif;
@@ -791,17 +1194,35 @@ body {
 .input-group textarea,
 .input-group select {
   width: 100%;
+  padding: 12px;
   padding: clamp(12px, 2.5vw, 15px);
   border: 2px solid #c4a484;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.3);
   color: #f0f0f0;
+  font-size: 13px;
   font-size: clamp(13px, 2.2vw, 14px);
   font-family: "MedievalSharp", cursive;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.input-group select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  padding-right: clamp(30px, 6vw, 40px);
+
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23c4a484' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  
+  background-position: right clamp(12px, 2.5vw, 15px) center;
+  
+  background-size: 1em;
+}
+
 .input-group textarea {
+  min-height: 80px;
   min-height: clamp(80px, 15vw, 120px);
   resize: vertical;
 }
@@ -817,6 +1238,7 @@ body {
 .image-upload-label {
   background: #593d1b;
   color: white;
+  padding: 10px 16px;
   padding: clamp(10px, 2vw, 12px) clamp(16px, 3vw, 20px);
   border-radius: 8px;
   cursor: pointer;
@@ -826,6 +1248,7 @@ body {
   font-weight: 600;
   display: inline-block;
   text-align: center;
+  font-size: 13px;
   font-size: clamp(13px, 2.2vw, 14px);
 }
 
@@ -855,21 +1278,13 @@ body {
   background-color: #dc3545;
   color: white;
   border: none;
-  width: auto;
-  min-width: unset;
-  max-width: 100%;
-  padding-inline: 1em;
-  padding-block: 0.5em;
+  padding: 0.5em 1em;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 15px;           /* Más espacio debajo de la imagen */
-  margin-left: auto;          /* Centrado horizontal */
-  margin-right: auto;         /* Centrado horizontal */
-  display: block;             /* Ocupa toda la línea y se centra */
+  margin: 15px auto 0;
+  display: block;
   font-size: 12px;
   transition: background-color 0.3s ease;
-  white-space: nowrap;
-  box-sizing: border-box;
 }
 
 .clear-image-button:hover {
@@ -887,9 +1302,11 @@ body {
 
 .save-button,
 .cancel-button {
+  padding: 10px 20px;
   padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 25px);
   border-radius: 8px;
   font-family: "Cinzel", serif;
+  font-size: 12px;
   font-size: clamp(12px, 2.2vw, 14px);
   font-weight: 700;
   cursor: pointer;
@@ -922,11 +1339,11 @@ body {
   border-color: #f0f0f0;
 }
 
-/* === NOTIFICACIONES Y MODALES === */
 .notification {
   position: fixed;
   top: 20px;
   left: 50%;
+  padding: 12px 25px;
   transform: translateX(-50%);
   color: white;
   padding: clamp(12px, 2.5vw, 16px) clamp(25px, 5vw, 30px);
@@ -937,6 +1354,7 @@ body {
   transition: opacity 0.4s ease, top 0.4s ease, visibility 0.4s;
   z-index: 9999;
   font-family: "Cinzel", serif;
+  font-size: 13px;
   font-size: clamp(13px, 2.2vw, 14px);
   max-width: 90vw;
   text-align: center;
@@ -972,9 +1390,6 @@ body {
   overflow-y: auto;
 }
 
-/* === RESPONSIVE DESIGN MEJORADO === */
-
-/* Tablets y pantallas medianas */
 @media (max-width: 1024px) {
   .blog-container {
     gap: 30px;
@@ -1002,7 +1417,6 @@ body {
   }
 }
 
-/* Tablets pequeñas */
 @media (max-width: 768px) {
   .blog-container {
     padding: 12px;
@@ -1082,7 +1496,6 @@ body {
   }
 }
 
-/* Móviles */
 @media (max-width: 480px) {
   .blog-container {
     padding: 10px;
@@ -1138,43 +1551,34 @@ body {
     gap: 12px;
   }
 
-  /* --- INICIO DE LA MODIFICACIÓN PARA BOTONES RESPONSIVE --- */
-  /* Hacemos que los contenedores de acciones se distribuyan */
   .owner-actions,
   .user-interactions {
     gap: 12px;
   }
 
-  /* El contenedor de "Me gusta" se queda a la izquierda */
   .user-interactions {
     justify-content: flex-start;
-    flex-grow: 1; /* Permite que ocupe el espacio sobrante */
+    flex-grow: 1;
   }
 
-  /* El contenedor de "Editar/Eliminar" se va a la derecha */
   .owner-actions {
     justify-content: flex-end;
   }
   
-  /* Estilo base para TODOS los botones de acción en móvil, asegurando que el texto sea visible */
   .action-button, .like-button {
     padding: 8px 12px;
     gap: 8px;
-    flex-grow: 0;      /* Evita que crezcan para rellenar espacio */
-    flex-shrink: 0;    /* Evita que se encojan */
+    flex-grow: 0;
+    flex-shrink: 0;
   }
 
-  /* Ajuste específico para el botón de Like */
   .like-button {
     font-size: 13px;
   }
 
-  /* Ajuste específico para los botones de Editar y Eliminar */
   .action-button {
     font-size: 12px;
   }
-  /* --- FIN DE LA MODIFICACIÓN --- */
-
 
   .interaction-count {
     font-size: 12px;
@@ -1241,7 +1645,6 @@ body {
   }
 }
 
-/* Móviles muy pequeños */
 @media (max-width: 360px) {
   .blog-container {
     padding: 8px;
@@ -1292,7 +1695,6 @@ body {
   }
 }
 
-/* Mejoras para modo landscape en móviles */
 @media (max-height: 500px) and (orientation: landscape) {
   .blog-container {
     padding-top: 40px;
@@ -1311,7 +1713,6 @@ body {
   }
 }
 
-/* Accesibilidad - reducir animaciones si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -1324,7 +1725,6 @@ body {
   .like-button:hover:not(:disabled) { transform: none; }
 }
 
-/* Mejoras para alto contraste */
 @media (prefers-contrast: high) {
   .blog-post,
   .create-post-container,
@@ -1343,7 +1743,6 @@ body {
   }
 }
 
-/* Print styles */
 @media print {
   .create-new-post-button,
   .back-to-list-button,
@@ -1406,18 +1805,109 @@ body {
   border-color: #f0f0f0;
 }
 
-.action-button,
-.like-button,
-.save-button,
-.cancel-button,
-.comment-submit-button,
-.create-new-post-button,
-.back-to-list-button,
-.back-to-list-button-inline {
-  width: auto;                /* Autoajuste al contenido */
-  min-width: unset;           /* Elimina restricciones previas */
-  max-width: 100%;            /* Evita desbordes */
-  padding-inline: 1em;        /* Padding lateral adaptable */
-  white-space: nowrap;        /* No saltar línea */
-  box-sizing: border-box;     /* Incluye padding en el ancho */
+
+
+.blog-post {
+  background: 
+    linear-gradient(rgba(10, 5, 2, 0.7), rgba(20, 10, 5, 0.75));
+  border: 1px solid #4a3c2a;
+  border-radius: 8px;
+  padding: clamp(25px, 5vw, 50px);
+  width: 100%;
+  max-width: 900px;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0,0.6),
+    0 0 0 4px #b8860b,
+    0 10px 40px rgba(0,0,0,0.7);
+}
+
+.post-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 25px;
+  position: relative;
+  border-bottom: 1px solid rgba(184, 134, 11, 0.3);
+}
+
+.post-header::after {
+  content: '⚜';
+  font-size: 24px;
+  color: #b8860b;
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #bebd54;
+  padding: 0 10px;
+}
+
+.post-title {
+  font-family: "Cinzel", serif;
+  font-size: clamp(32px, 6vw, 50px);
+  color: #f5e6c8;
+  text-shadow: 
+    0 0 15px rgba(255, 190, 80, 0.5),
+    0 2px 2px rgba(0,0,0,0.8);
+  margin: 0 0 20px 0;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px 30px;
+  font-family: "Cormorant Garamond", serif;
+  color: rgba(245, 230, 200, 0.7);
+  font-size: clamp(15px, 2.5vw, 17px);
+  font-style: italic;
+}
+
+.post-author .verified-badge {
+  margin-left: 8px;
+  color: #50c878;
+  font-size: 14px;
+}
+
+.post-category {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(184, 134, 11, 0.4);
+  color: #f5e6c8;
+}
+
+.post-image-container {
+  width: 100%;
+  max-height: 500px;
+  margin-bottom: 35px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 6px solid #3a2d1d;
+  box-shadow: 
+    inset 0 0 10px rgba(0,0,0,0.7),
+    0 4px 10px rgba(0,0,0,0.5);
+}
+
+.post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.2) contrast(1.1);
+}
+
+.post-content p:first-of-type::first-letter {
+  font-family: "Cinzel", serif;
+  font-size: 4em;
+  color: #b8860b;
+  float: left;
+  margin-right: 0.1em;
+  line-height: 0.8;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }

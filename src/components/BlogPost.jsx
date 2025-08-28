@@ -75,8 +75,8 @@ const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNot
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const response = await fetch(`${API_URL}/user/publicaciones/${post.id}/comentarios`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const response = await fetch(`${API_URL}/blog/publicaciones/${post.id}/comentarios`, {
+                    headers: { 'Authorization': `Bearer ${token}`  }
                 });
                 if (!response.ok) throw new Error('Error al cargar comentarios.');
                 const data = await response.json();
@@ -120,7 +120,7 @@ const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNot
             return;
         }
         apiRequest(
-            '/user/comentar-publicacion', 'POST',
+            '/blog/comentar-publicacion', 'POST',
             { publicacion_id: post.id, comentario: newComment },
             "Comentario añadido!",
             "Error al añadir comentario."
@@ -128,7 +128,7 @@ const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNot
     };
 
     const handleEditComment = (commentId, updatedText) => {
-        apiRequest(`/user/editar-comentario/${commentId}`, 'PUT', { texto: updatedText }, "Comentario actualizado!", "Error al editar.");
+        apiRequest(`/blog/editar-comentario/${commentId}`, 'PUT', { texto: updatedText }, "Comentario actualizado!", "Error al editar.");
     };
 
     const handleDeleteComment = (commentId) => {
@@ -137,7 +137,7 @@ const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNot
             title: "Eliminar Comentario",
             message: "¿Estás seguro? Esta acción es irreversible.",
             onConfirm: () => {
-                apiRequest(`/user/eliminar-comentario/${commentId}`, 'DELETE', null, "Comentario eliminado.", "Error al eliminar.");
+                apiRequest(`/blog/eliminar-comentario/${commentId}`, 'DELETE', null, "Comentario eliminado.", "Error al eliminar.");
             }
         });
     };
@@ -161,7 +161,7 @@ const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNot
         }
         setIsLiking(true);
         const method = userHasLiked ? 'DELETE' : 'POST';
-        const endpoint = `/user/publicaciones/${post.id}/${userHasLiked ? 'unlike' : 'like'}`;
+        const endpoint = `/blog/publicaciones/${post.id}/${userHasLiked ? 'unlike' : 'like'}`;
         apiRequest(endpoint, method, {}, null, "Error en la acción 'me gusta'.")
             .catch(() => setIsLiking(false));
     };
