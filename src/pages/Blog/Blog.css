@@ -159,6 +159,42 @@ body {
 }
 
 
+/* === ESTILOS PARA ELIMINAR LA FLECHA DEL SELECTOR === */
+
+/* Estilo principal del <select> */
+.input-group select {
+  /* Estas tres propiedades son la clave para eliminar la flecha por defecto */
+  -webkit-appearance: none; /* Para navegadores basados en WebKit (Chrome, Safari) */
+  -moz-appearance: none;    /* Para navegadores basados en Gecko (Firefox) */
+  appearance: none;         /* Estándar CSS */
+  
+  /* Asegura que herede los estilos que ya definiste */
+  width: 100%;
+  padding: clamp(12px, 2.5vw, 15px);
+  border: 2px solid #c4a484;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.3); /* Usar background-color en lugar de background */
+  color: #f0f0f0;
+  font-size: clamp(13px, 2.2vw, 14px);
+  font-family: "MedievalSharp", cursive;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  
+  /* Puedes ajustar el padding-right si el texto se ve muy pegado al borde derecho */
+  padding-right: 15px; 
+  cursor: pointer;
+}
+
+/* Estilo para el texto del placeholder "Selecciona una categoría..." */
+.input-group select:invalid {
+  color: rgba(240, 240, 240, 0.6);
+}
+
+/* Estilo para las opciones del desplegable (pueden no ser totalmente personalizables en todos los navegadores) */
+.input-group select option {
+  background: #2b1d0f; /* Fondo oscuro temático */
+  color: #f0f0f0;
+  font-family: "MedievalSharp", cursive;
+}
 /* === ESTILOS PARA POSTS === */
 .post-list-grid {
   display: grid;

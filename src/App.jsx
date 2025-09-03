@@ -13,12 +13,13 @@ import Register from './pages/Register/Register';
 import Verification from './pages/Verification/Verification';
 import BlogPage from './pages/Blog/BlogPage';
 import About from './pages/About/about';
-import Player from './pages/Player/Player'; // Tu página de perfil de usuario
-import RedirectToGame from './components/RedirectToGame'; // El componente que redirige al juego
+import Player from './pages/Player/Player';
+
+// ¡NUEVA IMPORTACIÓN!
+import GameSetupModal from './components/GameSetupModal/GameSetupModal'; // ¡Importa el nuevo componente Modal!
 
 const App = () => {
   return (
-    // Se asume que BrowserRouter está en un nivel superior (index.js), si no, envuelve todo aquí.
     <AuthProvider>
       <Header />
       <Routes>
@@ -32,8 +33,9 @@ const App = () => {
 
         {/* --- Rutas Protegidas --- */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/player" element={<Player />} />      {/* MUESTRA EL PERFIL */}
-          <Route path="/juego" element={<RedirectToGame />} />  {/* REDIRIGE AL JUEGO */}
+          <Route path="/player" element={<Player />} />        
+          {/* ¡CAMBIO AQUÍ! La ruta /juego ahora carga el MODAL de configuración */}
+          <Route path="/juego" element={<GameSetupModal />} />
         </Route>
       </Routes>
     </AuthProvider>

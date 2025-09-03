@@ -1,77 +1,73 @@
-import React from 'react';
-// eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from 'framer-motion';
-import './ConfirmationModal.css';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import GameSetup from  '../../GameSetup/GameSetup'; // Asegúrate que la ruta a GameSetup.jsx sea correcta
+import '../../GameSetup/GameSetup.css'; // Importamos el CSS combinado
 
-const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
-    if (!isOpen) return null;
+const GameSetupModal = () => {
+    const navigate = useNavigate();
+    const modalRef = useRef(null);
+    const overlayRef = useRef(null);
 
-    const handleConfirmClick = () => {
-        if (typeof onConfirm === "function") {
-            onConfirm();
+    // Función para cerrar el modal con animación
+    const closeGameSetup = useCallback(() => {
+        if (modalRef.current && overlayRef.current) {
+            modalRef.current.classList.add('closing');
+            overlayRef.current.classList.add('closing');
+
+            const handleAnimationEnd = () => {
+                navigate('/player'); // Navega a la página del jugador después de cerrar
+                // Limpiamos el listener para evitar ejecuciones múltiples
+                modalRef.current.removeEventListener('animationend', handleAnimationEnd);
+            };
+            modalRef.current.addEventListener('animationend', handleAnimationEnd);
+        } else {
+            // Fallback si algo sale mal
+            navigate('/player');
         }
-        if (typeof onClose === "function") {
-            onClose();
+    }, [navigate]);
+
+    // Manejador para cerrar al hacer clic fuera del contenido
+    const handleOutsideClick = useCallback((event) => {
+        // Cierra solo si se hace clic directamente en el overlay (no en sus hijos)
+        if (event.target === overlayRef.current) {
+            closeGameSetup();
         }
-    };
+    }, [closeGameSetup]);
+
+    // Efecto para añadir/limpiar listeners y la clase del body
+    useEffect(() => {
+        // Bloquea el scroll del body
+        document.body.classList.add('modal-open');
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                closeGameSetup();
+            }
+        };
+
+        // Listeners para cerrar
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Función de limpieza
+        return () => {
+            document.body.classList.remove('modal-open');
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [closeGameSetup]);
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    className="modal-overlay"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={onClose}
-                >
-                    <motion.div
-                        className="modal-content"
-                        initial={{ y: -50, opacity: 0, scale: 0.8 }}
-                        animate={{ y: 0, opacity: 1, scale: 1 }}
-                        exit={{ y: 50, opacity: 0, scale: 0.8 }}
-                        transition={{
-                            type: 'spring',
-                            stiffness: 300,
-                            damping: 25,
-                            duration: 0.3
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Decorative elements */}
-                        <div className="modal-decoration-top"></div>
-                        <div className="modal-decoration-bottom"></div>
-
-                        {/* Crown icon */}
-                        <div className="modal-crown">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M5 16L3 5l4.5 4L12 4l4.5 5L21 5l-2 11H5zm2.7-2h8.6l.9-5.4-2.1 1.7L12 8l-3.1 2.3-2.1-1.7L7.7 14z" />
-                            </svg>
-                        </div>
-
-                        <h3 className="modal-title">
-                            {title || 'Decreto Real'}
-                        </h3>
-
-                        <div className="modal-divider"></div>
-
-                        <p className="modal-message">
-                            {message || '¿Su Majestad desea proceder con esta noble acción?'}
-                        </p>
-
-                        <div className="modal-actions">
-                            <button className="modal-button cancel" onClick={onClose}>
-                                <span className="button-text">Cancelar</span>
-                            </button>
-                            <button className="modal-button confirm" onClick={handleConfirmClick}>
-                                <span className="button-text">Confirmar</span>
-                            </button>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+        // Asignamos el ref y el listener de clic al overlay
+        <div ref={overlayRef} className="game-setup-modal-overlay" onMouseDown={handleOutsideClick}>
+            <div ref={modalRef} className="game-setup-modal-content">
+                <button className="game-setup-modal-close-button" onClick={closeGameSetup} aria-label="Cerrar">
+                    &times; {/* Una 'X' más elegante y accesible */}
+                </button>
+                {/* Renderiza el componente GameSetup dentro del modal */}
+                <GameSetup onClose={closeGameSetup} />
+            </div>
+        </div>
     );
 };
 
-export default ConfirmationModal;
+export default GameSetupModal;
+

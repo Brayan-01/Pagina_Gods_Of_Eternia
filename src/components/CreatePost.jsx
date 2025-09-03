@@ -153,7 +153,7 @@ const CreatePost = ({ onPostCreated, postToEdit, onCancelEdit, onCancelCreate, s
                     <div className="character-count">{content.length}/2000</div>
                 </div>
 
-                <div className="input-group">
+                <div className="input-group select-wrapper">
                     <label htmlFor="category">Categoría:</label>
                     <select
                         id="category"

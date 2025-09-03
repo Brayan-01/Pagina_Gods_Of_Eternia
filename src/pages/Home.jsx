@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Importado Link para la navegación
 import { useAuth } from "../context/AuthContext"; 
 
 // Componentes
@@ -9,16 +9,33 @@ import Leaderboard from "../pages/Leaderboard/Leaderboard";
 import TypingEffect from '../components/TypingEffect';
 
 function Home() {
-    const { isAuthenticated } = useAuth();
-    // ✅ CORRECCIÓN: El enlace para jugar ahora apunta a /juego
-    const playLink = isAuthenticated ? "/juego" : "/register";
+    const { isAuthenticated, verifyAndPrepareForGame } = useAuth(); 
+    const navigate = useNavigate();
     
     const [isTypingDone, setIsTypingDone] = useState(false);
     const fullTitle = "Biienvenidos a Gods of Eternia";
+    const [isPreparing, setIsPreparing] = useState(false);
 
     useEffect(() => {
         document.title = 'Inicio | Gods Of Eternia';
     }, []);
+
+    // Función para manejar el clic en el botón de "Jugar Ahora"
+    const handlePlayClick = async () => {
+        if (isAuthenticated) {
+            setIsPreparing(true);
+            const verificationSuccess = await verifyAndPrepareForGame(); 
+            setIsPreparing(false);
+            
+            if (verificationSuccess) {
+                navigate("/juego");
+            } else {
+                console.log("Fallo en la verificación, no se navega a /juego.");
+            }
+        } else {
+            navigate("/register");
+        }
+    };
 
     return (
         <div className="page-container">
@@ -49,9 +66,13 @@ function Home() {
                             Sumérgete en un mundo épico de fantasía medieval donde los dioses caminan entre los mortales.
                         </p>
                         <div className="btn-container">
-                            <Link to={playLink}>
-                                <button className="play-button">Jugar Ahora</button>
-                            </Link>
+                            <button 
+                                className="play-button" 
+                                onClick={handlePlayClick}
+                                disabled={isPreparing}
+                            >
+                                {isPreparing ? 'Preparando...' : 'Jugar Ahora'}
+                            </button>
                             <Leaderboard />
                         </div>
                     </div>
