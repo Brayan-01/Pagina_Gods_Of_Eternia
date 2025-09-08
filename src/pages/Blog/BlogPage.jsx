@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import BlogPost from '../../components/BlogPost';
 import CreatePost from '../../components/CreatePost';
 import { useAuth } from '../../context/AuthContext';
-import './Blog.css';
 import { io } from 'socket.io-client';
 
 const BlogPage = () => {
@@ -178,37 +177,47 @@ const BlogPage = () => {
         return text.substring(0, maxLength).trim() + '...';
     };
 
+    const notificationClasses = {
+        base: 'fixed top-5 left-1/2 -translate-x-1/2 p-3 px-6 rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 z-[9999] font-["Cinzel",_serif] text-sm text-white max-w-[90vw] text-center',
+        show: 'top-10 opacity-100 visible',
+        success: 'bg-green-600',
+        error: 'bg-red-600',
+        info: 'bg-blue-600'
+    };
+
+    const mainButtonClasses = "text-sm sm:text-base py-3 px-6 font-['Cinzel',_serif] font-bold text-white bg-[#593d1b] border-2 border-yellow-400 rounded-lg cursor-pointer transition-all duration-300 shadow-lg whitespace-nowrap text-center hover:enabled:bg-yellow-400 hover:enabled:text-[#2b1d0f] hover:enabled:scale-105 hover:enabled:shadow-yellow-500/50 disabled:opacity-60 disabled:cursor-not-allowed";
+
     if (loading) {
-        return <div className="loading-screen">Cargando crónicas de Eternia...</div>;
+        return <div className="text-[#9b7e20] text-2xl font-bold uppercase tracking-wider flex justify-center items-center h-screen">Cargando crónicas de Eternia...</div>;
     }
 
     const selectedPost = selectedPostId ? posts.find(post => post.id === selectedPostId) : null;
 
     return (
         <React.Fragment>
-            <div className={`notification ${notification.type} ${notification.message ? 'show' : ''}`}>
+            <div className={`${notificationClasses.base} ${notification.message ? notificationClasses.show : ''} ${notificationClasses[notification.type] || ''}`}>
                 {notification.message}
             </div>
 
-            <div className="blog-container">
-                <div className="blog-header">
-                    <h1>Crónicas de Eternia</h1>
+            <div className="flex flex-col items-center gap-10 min-h-screen w-full p-5 pt-24">
+                <div className="flex justify-between items-center w-full max-w-4xl text-white pb-5 border-b-2 border-[#c4a484] flex-wrap gap-5">
+                    <h1 className="font-['Cinzel',_serif] text-2xl sm:text-4xl text-shadow-[2px_2px_8px_rgba(0,0,0,0.7)] text-center flex-1 min-w-[200px]">Crónicas de Eternia</h1>
                     {user && !isCreating && !selectedPostId && (
-                        <button className="create-new-post-button" onClick={() => setIsCreating(true)}>
+                        <button className={mainButtonClasses} onClick={() => setIsCreating(true)}>
                             + Forjar Nueva Crónica
                         </button>
                     )}
                     {selectedPostId && (
-                        <button className="back-to-list-button" onClick={handleBackToList}>
+                        <button className={mainButtonClasses} onClick={handleBackToList}>
                             ← Volver a Crónicas
                         </button>
                     )}
                 </div>
 
                 {!selectedPostId && (
-                    <div className="category-navbar">
+                    <div className="flex flex-wrap justify-center gap-3 w-full max-w-5xl bg-[linear-gradient(rgba(0,0,0,0.3),_rgba(0,0,0,0.1)),url('https://www.transparenttextures.com/patterns/old-map.png')] p-4 border-y-2 border-[#c4a484] shadow-inner mb-8 rounded-md">
                         <button
-                            className={`category-button ${selectedFilterCategory === null ? 'active' : ''}`}
+                            className={`px-4 py-2 rounded-md font-['Cinzel',_serif] text-xs sm:text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 text-shadow-[1px_1px_2px_rgba(0,0,0,0.7)] shadow-md ${selectedFilterCategory === null ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-[#2b1d0f] border-yellow-400 font-bold shadow-inner-lg scale-105' : 'bg-gradient-to-br from-[#6a4f29] to-[#4a2f10] text-gray-200 border border-[#c4a484] hover:bg-gradient-to-br hover:from-yellow-400 hover:to-yellow-500 hover:text-[#2b1d0f] hover:-translate-y-1 hover:shadow-lg'}`}
                             onClick={() => handleCategoryFilterChange(null)}
                         >
                             Todas las Crónicas
@@ -216,7 +225,7 @@ const BlogPage = () => {
                         {categories.map(category => (
                             <button
                                 key={category.id}
-                                className={`category-button ${selectedFilterCategory === category.id ? 'active' : ''}`}
+                                className={`px-4 py-2 rounded-md font-['Cinzel',_serif] text-xs sm:text-sm font-semibold cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 text-shadow-[1px_1px_2px_rgba(0,0,0,0.7)] shadow-md ${selectedFilterCategory === category.id ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-[#2b1d0f] border-yellow-400 font-bold shadow-inner-lg scale-105' : 'bg-gradient-to-br from-[#6a4f29] to-[#4a2f10] text-gray-200 border border-[#c4a484] hover:bg-gradient-to-br hover:from-yellow-400 hover:to-yellow-500 hover:text-[#2b1d0f] hover:-translate-y-1 hover:shadow-lg'}`}
                                 onClick={() => handleCategoryFilterChange(category.id)}
                             >
                                 {category.nombre}
@@ -239,57 +248,64 @@ const BlogPage = () => {
                 ) : (
                     <>
                         {posts.length > 0 ? (
-                            <div className="post-list-grid">
-                                {posts.map((post) => (
-                                    <article key={post.id} className="blog-post-card">
+                            <div className="grid gap-6 md:gap-8 grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] py-6 max-w-7xl w-full">
+                                {posts.map((post, index) => (
+                                    <motion.article
+                                        key={post.id}
+                                        className="bg-gradient-to-br from-[rgba(180,146,75,0.95)] to-[rgba(74,48,28,0.98)] backdrop-blur-md rounded-2xl border-2 border-transparent relative overflow-hidden flex flex-col transition-all duration-300 ease-in-out shadow-lg hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] focus-within:outline-2 focus-within:outline-yellow-400"
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    >
                                         {post.imageUrl && (
-                                            <div className="card-image-container">
+                                            <div className="h-52 sm:h-60 w-full overflow-hidden relative rounded-t-xl">
                                                 <img
                                                     src={post.imageUrl}
                                                     alt={post.title}
-                                                    className="card-image"
+                                                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                                                     loading="lazy"
                                                 />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
                                             </div>
                                         )}
-                                        <div className="card-content">
+                                        <div className="p-5 sm:p-6 flex flex-col flex-grow gap-4">
                                             {post.categoria_nombre && (
-                                                <span className="card-category">
+                                                <span className="bg-yellow-500/90 backdrop-blur-sm text-stone-900 px-4 py-1.5 rounded-full text-xs font-bold font-['Cinzel',_serif] uppercase self-start shadow-md">
                                                     {post.categoria_nombre}
                                                 </span>
                                             )}
-                                            <h3 className="card-title">{post.title}</h3>
+                                            <h3 className="font-['Cormorant_Garamond',_serif] text-yellow-50 text-xl sm:text-2xl font-bold text-shadow-[0_1px_3px_rgba(0,0,0,0.5)] leading-tight flex-grow break-words hyphens-auto">{post.title}</h3>
                                             {post.content && (
-                                                <p className="card-description">
+                                                <p className="text-gray-300 text-sm leading-relaxed">
                                                     {truncateText(post.content)}
                                                 </p>
                                             )}
                                             <button
-                                                className="view-more-button"
+                                                className="bg-gradient-to-r from-[#6b4423] to-[#8b5a3c] text-slate-50 px-5 py-3 rounded-lg text-sm font-['Cinzel',_serif] font-medium cursor-pointer relative overflow-hidden flex items-center justify-center gap-2 mt-auto self-start transition-all duration-300 ease-in-out uppercase tracking-wider shadow-md hover:shadow-lg hover:from-yellow-500 hover:to-amber-400 hover:text-stone-900 hover:shadow-yellow-400/50 hover:-translate-y-0.5 before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full before:bg-gradient-to-r before:from-transparent before:via-yellow-300/40 before:to-transparent before:transition-all before:duration-500 hover:before:left-full"
                                                 onClick={() => handleViewMore(post.id)}
                                             >
-                                                ⚔️ Leer Crónica
+                                                <span className="transition-transform duration-300 group-hover:translate-x-1">⚔️</span> Leer Crónica
                                             </button>
                                         </div>
-                                    </article>
+                                    </motion.article>
                                 ))}
                             </div>
                         ) : (
-                            <div className="empty-state">
+                            <div className="text-center text-gray-400 italic bg-black/20 rounded-lg p-8 border-dashed border border-gray-600">
                                 <p>🏰 Aún no se han escrito crónicas. ¡Sé el primero en forjar una leyenda! ⚔️</p>
                             </div>
                         )}
                         <AnimatePresence>
                             {isCreating && (
                                 <motion.div
-                                    className="create-post-modal-overlay"
+                                    className="fixed inset-0 bg-black/80 flex justify-center items-center z-50 p-5"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
                                     onClick={() => setIsCreating(false)}
                                 >
                                     <motion.div
-                                        className="create-post-modal-content"
+                                        className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
                                         initial={{ y: -50, opacity: 0 }}
                                         animate={{ y: 0, opacity: 1 }}
                                         exit={{ y: -50, opacity: 0 }}
@@ -314,14 +330,14 @@ const BlogPage = () => {
                 <AnimatePresence>
                     {postToEdit && (
                         <motion.div
-                            className="create-post-modal-overlay"
+                            className="fixed inset-0 bg-black/80 flex justify-center items-center z-50 p-5"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={handleCancelEdit}
                         >
                             <motion.div
-                                className="create-post-modal-content"
+                                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
                                 initial={{ y: -50, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 exit={{ y: -50, opacity: 0 }}

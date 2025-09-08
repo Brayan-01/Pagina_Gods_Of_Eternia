@@ -3,7 +3,6 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import Verification from "../Verification/Verification";
-import "./Register.css";
 
 const Register = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -25,34 +24,7 @@ const Register = () => {
     const [passwordStrength, setPasswordStrength] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    // ... (La función validatePassword no cambia)
-    const validatePassword = (password) => {
-        if (password.length < 8) {
-            return "La contraseña debe tener al menos 8 caracteres";
-        }
-        if (!/[A-Z]/.test(password)) {
-            return "La contraseña debe contener al menos una letra mayúscula";
-        }
-        if (!/[a-z]/.test(password)) {
-            return "La contraseña debe contener al menos una letra minúscula";
-        }
-        if (!/[0-9]/.test(password)) {
-            return "La contraseña debe contener al menos un número";
-        }
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-            return "La contraseña debe contener al menos un carácter especial";
-        }
-        const commonPasswords = [
-            "123456", "password", "123456789", "12345678", "12345", "1234567",
-            "1234567890", "qwerty", "abc123", "password123", "admin", "letmein",
-            "welcome", "monkey", "1234", "dragon", "sunshine", "master", "123123",
-            "football", "iloveyou", "admin123", "welcome123", "password1"
-        ];
-        if (commonPasswords.includes(password.toLowerCase())) {
-            return "Esta contraseña es muy común y fácil de adivinar";
-        }
-        return "";
-    };
+import { validatePassword } from "../../utils/validation";
 
 
     const handleChange = (e) => {
@@ -108,52 +80,54 @@ const Register = () => {
         return <Verification prefilledEmail={registrationEmail} />;
     }
 
+    const inputContainerClasses = "relative w-full flex items-center bg-white/10 border-2 border-[#c4a484] rounded-lg my-2 transition-all duration-300 ease-in-out focus-within:border-yellow-400 focus-within:shadow-[0_0_15px_rgba(255,215,0,0.8)]";
+    const inputClasses = "w-full h-full p-3.5 border-none bg-transparent text-white text-lg font-['MedievalSharp',_serif] outline-none placeholder:font-['Cinzel',_serif] placeholder:text-white/70";
+
     // Renderizado del formulario de registro
     return (
-        <div className="register-container">
+        <div className="flex justify-center items-start min-h-screen py-32 w-screen font-['MedievalSharp',_cursive] bg-[linear-gradient(rgba(0,0,0,0.6),_rgba(0,0,0,0.6)),url('/fondo_1.png')] bg-no-repeat bg-center bg-fixed cursor-[url('/assets/sword-cursor.png'),_auto]">
             <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="register-box"
+                className="bg-gradient-to-b from-[#9b7e20] to-[#774b1f] p-10 rounded-lg shadow-lg text-center w-[400px] border-2 border-[#c4a484] transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-yellow-300/50"
             >
-                <h2>Registro - Gods of Eternia</h2>
+                <h2 className="text-white text-2xl mb-5 text-shadow-[3px_3px_8px_rgba(0,0,0,0.5)]">Registro - Gods of Eternia</h2>
 
                 {error && (
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="error-message"
+                        className="bg-gradient-to-r from-[#8b2635] to-[#a73544] text-white p-3 px-5 rounded-lg mb-5 border-2 border-[#c4a484] font-['Cinzel',_serif] text-sm text-center shadow-[0_4px_12px_rgba(139,38,53,0.4)] flex items-center justify-center gap-2"
                     >
-                        <span className="error-icon">⚠️</span>
+                        <span className="text-base drop-shadow-[0_0_3px_rgba(255,255,255,0.3)]">⚠️</span>
                         {error}
                     </motion.div>
                 )}
 
-                <form onSubmit={handleRegister}>
-                    {/* Campos de usuario, email y contraseña (sin cambios) */}
-                    <div className="password-container">
-                        <input type="text" name="username" placeholder="Usuario" required value={formData.username} onChange={handleChange} />
-                        <span className="eye-button" style={{ visibility: 'hidden' }}><FaEye /></span>
+                <form onSubmit={handleRegister} className="flex flex-col items-center w-full">
+                    <div className={inputContainerClasses}>
+                        <input type="text" name="username" placeholder="Usuario" required value={formData.username} onChange={handleChange} className={inputClasses} />
+                        <span className="absolute right-4 text-xl text-white cursor-pointer invisible"><FaEye /></span>
                     </div>
 
-                    <div className="password-container">
-                        <input type="email" name="email" placeholder="Correo" required value={formData.email} onChange={handleChange} />
-                        <span className="eye-button" style={{ visibility: 'hidden' }}><FaEye /></span>
+                    <div className={inputContainerClasses}>
+                        <input type="email" name="email" placeholder="Correo" required value={formData.email} onChange={handleChange} className={inputClasses} />
+                        <span className="absolute right-4 text-xl text-white cursor-pointer invisible"><FaEye /></span>
                     </div>
 
-                    <div className="password-container">
+                    <div className={inputContainerClasses}>
                         <input
                             type={showPassword ? "text" : "password"}
                             name="password"
                             placeholder="Contraseña"
                             required
-                            className="password-input"
+                            className={inputClasses}
                             value={formData.password}
                             onChange={handleChange}
                         />
                         <span
-                            className="eye-button"
+                            className="absolute right-4 text-xl text-white cursor-pointer"
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -164,7 +138,7 @@ const Register = () => {
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="password-strength-message"
+                            className="bg-gradient-to-r from-[#8b4513] to-[#a0522d] text-yellow-400 p-2 px-4 rounded-md mt-[-5px] mb-4 border border-[#c4a484] font-['Cinzel',_serif] text-xs text-center shadow-[0_2px_8px_rgba(139,69,19,0.3)]"
                         >
                             {passwordStrength}
                         </motion.div>
@@ -174,30 +148,27 @@ const Register = () => {
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="password-strong-message"
+                            className="bg-gradient-to-r from-[#2d5016] to-[#3d6b1f] text-green-300 p-2 px-4 rounded-md mt-[-5px] mb-4 border border-[#c4a484] font-['Cinzel',_serif] text-xs text-center shadow-[0_2px_8px_rgba(45,80,22,0.3)]"
                         >
                             ✅ Contraseña segura
                         </motion.div>
                     )}
 
-                    <button type="submit" disabled={isLoading}>
+                    <button type="submit" disabled={isLoading} className="w-full mt-2.5 bg-[#593d1b] text-white border-none p-3.5 rounded-md cursor-pointer text-lg uppercase font-['Cinzel',_serif] transition-all duration-300 hover:bg-yellow-400 hover:text-[#593d1b] hover:scale-105 hover:shadow-[0_0_15px_rgba(255,215,0,0.8)] disabled:opacity-60 disabled:cursor-not-allowed">
                         {isLoading ? "Registrando..." : "Registrarse"}
                     </button>
                 </form>
 
-                {/* --- NUEVO BOTÓN AÑADIDO AQUÍ --- */}
-                <div className="verify-container">
-                    <span className="verify-text">¿Ya te registraste?</span>
+                <div className="text-center mt-6 p-4 bg-black/40 rounded-xl border-t border-purple-400/30 leading-relaxed">
+                    <span className="text-gray-300 text-sm mr-2">¿Ya te registraste?</span>
                     <button
                         type="button"
-                        className="verify-button"
+                        className="bg-none border-none p-0 text-[#9f8cff] font-sans text-sm font-bold cursor-pointer no-underline relative transition-colors duration-300 ease-out hover:text-purple-300 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-300 after:scale-x-0 after:origin-center after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.19,1,0.22,1)] hover:after:scale-x-100"
                         onClick={() => setIsRegistered(true)}
                     >
                         Verifica tu cuenta
                     </button>
                 </div>
-
-                {/* --- FIN DEL NUEVO BOTÓN --- */}
 
             </motion.div>
         </div>

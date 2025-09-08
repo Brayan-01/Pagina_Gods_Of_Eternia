@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import CameraModal from "./Modal/CameraModal"; // Ruta de importación actualizada
-import "./Player.css";
 import knightAvatar from '../../assets/knight.png';
 
 // --- FUNCIONES DE PROCESAMIENTO DE IMAGEN ---
@@ -96,12 +95,19 @@ const processImageWithMedievalFilter = (file) => {
     });
 };
 
+import GameSetupModal from "../../components/GameSetupModal/GameSetupModal";
+
 // --- COMPONENTE PRINCIPAL ---
 
-const Player = () => {
+const Player = ({ showModalOnLoad = false }) => {
+    const [isGameSetupOpen, setIsGameSetupOpen] = useState(showModalOnLoad);
+
     useEffect(() => {
         document.title = 'Jugador | Gods of Eternia';
-    }, []);
+        if (showModalOnLoad) {
+            setIsGameSetupOpen(true);
+        }
+    }, [showModalOnLoad]);
 
     const { token, user, logout } = useAuth();
     const navigate = useNavigate();
@@ -315,24 +321,34 @@ const Player = () => {
         { label: 'Insignias', value: 'Dragones del Alba' }
     ];
 
+    const notificationClasses = {
+        base: 'fixed top-5 left-1/2 -translate-x-1/2 p-3 px-6 rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 z-[9999] font-["Cinzel",_serif] text-sm text-white max-w-[90vw] text-center',
+        show: 'top-10 opacity-100 visible',
+        success: 'bg-green-600',
+        error: 'bg-red-600',
+        loading: 'bg-blue-600 animate-pulse'
+    };
+
     if (loading && !profileData.username) {
-        return <div className="loading-screen">Cargando Perfil...</div>;
+        return <div className="flex justify-center items-center h-screen text-yellow-300 text-2xl font-['Cinzel',_serif]">Cargando Perfil...</div>;
     }
 
     return (
         <>
-            <div className={`notification ${notification.type} ${notification.message ? 'show' : ''}`}>
+            {isGameSetupOpen && <GameSetupModal onClose={() => setIsGameSetupOpen(false)} />}
+
+            <div className={`${notificationClasses.base} ${notification.message ? notificationClasses.show : ''} ${notificationClasses[notification.type] || ''}`}>
                 {notification.message}
             </div>
 
             {showImageOptions && (
-                <div className="image-options-modal-overlay" onClick={() => setShowImageOptions(false)}>
-                    <div className="image-options-modal" onClick={(e) => e.stopPropagation()}>
-                        <h3>🏰 Cambiar Retrato Medieval</h3>
-                        <p className="modal-subtitle">Elige cómo crear tu retrato épico</p>
-                        <button className="modal-button" onClick={handleTakePhoto}>📸 Capturar Retrato</button>
-                        <button className="modal-button" onClick={handleSelectFromGallery}>🖼 Transformar Imagen</button>
-                        <button className="modal-button cancel" onClick={() => setShowImageOptions(false)}>❌ Cancelar</button>
+                <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[1000]" onClick={() => setShowImageOptions(false)}>
+                    <div className="bg-gradient-to-br from-[#9b7e20] to-[#774b1f] p-8 rounded-xl border border-yellow-600 flex flex-col gap-4 text-center text-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                        <h3 className="mt-0 text-yellow-400 font-['Cinzel',_serif] text-2xl">🏰 Cambiar Retrato Medieval</h3>
+                        <p className="text-yellow-100/80 -mt-2">Elige cómo crear tu retrato épico</p>
+                        <button className="bg-transparent border border-yellow-500 text-yellow-300 px-5 py-2.5 rounded-lg text-lg transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:scale-105" onClick={handleTakePhoto}>📸 Capturar Retrato</button>
+                        <button className="bg-transparent border border-yellow-500 text-yellow-300 px-5 py-2.5 rounded-lg text-lg transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:scale-105" onClick={handleSelectFromGallery}>🖼 Transformar Imagen</button>
+                        <button className="bg-red-800/80 border border-red-600 text-white px-5 py-2.5 rounded-lg text-lg transition-all duration-300 hover:bg-red-700 hover:scale-105 mt-2" onClick={() => setShowImageOptions(false)}>❌ Cancelar</button>
                     </div>
                 </div>
             )}
@@ -343,20 +359,19 @@ const Player = () => {
                 onCapture={handlePhotoCaptured}
             />
 
-            <div className="profile-container">
-                <div className="profile-box">
-                    <h2>Perfil del Héroe</h2>
-                    {error && <div className="error-message">{error}</div>}
-                    <div className="profile-main-content">
-                        <div className="profile-image-container">
+            <div className="flex justify-center items-start min-h-screen w-full bg-[linear-gradient(rgba(0,0,0,0.6),_rgba(0,0,0,0.6)),url('/fondo_1.png')] bg-no-repeat bg-center bg-fixed p-5 pt-28 sm:pt-32 pb-10">
+                <div className="bg-gradient-to-b from-[#9b7e20] to-[#774b1f] p-6 sm:p-10 rounded-lg shadow-2xl w-full max-w-4xl border-2 border-[#c4a484] flex flex-col gap-6">
+                    <h2 className="text-white text-3xl sm:text-4xl m-0 text-shadow-[2px_2px_6px_rgba(0,0,0,0.6)] font-['Cinzel',_serif] text-center pb-4 border-b border-yellow-700/50">Perfil del Héroe</h2>
+                    {error && <div className="bg-red-500/20 border border-red-500 text-red-300 p-3 rounded-md text-center">{error}</div>}
+                    <div className="flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-10 w-full">
+                        <div className="relative flex-shrink-0 w-48">
                             <img
-                                // MODIFICACIÓN CLAVE AQUÍ: AÑADIR EL PARAMETRO DE CONSULTA PARA EVITAR CACHE
                                 src={`${profileImage || defaultAvatar}?v=${profileImageKey}`}
                                 alt="Perfil del jugador"
-                                className="profile-image"
+                                className="w-44 h-44 rounded-full border-4 border-[#c4a484] shadow-lg object-cover mx-auto"
                                 onError={(e) => { e.target.src = defaultAvatar; }}
                             />
-                            <div className="image-upload-button" onClick={handleProfileImageClick} title="Cambiar imagen">
+                            <div className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-black/70 flex items-center justify-center text-xl cursor-pointer border-2 border-yellow-400 transition-all duration-300 hover:bg-yellow-400 hover:text-black hover:scale-110" onClick={handleProfileImageClick} title="Cambiar imagen">
                                 🏰
                             </div>
                             <input
@@ -364,55 +379,56 @@ const Player = () => {
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
-                                style={{ display: "none" }}
+                                className="hidden"
                             />
                         </div>
-                        <div className="profile-details">
+                        <div className="w-full text-center md:text-left">
                             {editing ? (
-                                <div className="profile-edit">
-                                    <div className="input-group">
-                                        <label htmlFor="usernameEdit">Nombre de héroe:</label>
+                                <div className="flex flex-col gap-5 w-full">
+                                    <div className="w-full">
+                                        <label htmlFor="usernameEdit" className="block text-yellow-400 mb-2 text-lg font-['Cinzel',_serif]">Nombre de héroe:</label>
                                         <input
                                             id="usernameEdit" type="text" name="username"
                                             value={editedData.username} onChange={handleChange} maxLength={20}
+                                            className="w-full p-3 border-2 border-[#c4a484] rounded-md bg-black/20 text-white text-lg font-['MedievalSharp',_cursive] focus:border-yellow-400 focus:outline-none focus:ring-1 focus:ring-yellow-400/50"
                                         />
                                     </div>
-                                    <div className="input-group">
-                                        <label htmlFor="descriptionEdit">Descripción:</label>
+                                    <div className="w-full">
+                                        <label htmlFor="descriptionEdit" className="block text-yellow-400 mb-2 text-lg font-['Cinzel',_serif]">Descripción:</label>
                                         <textarea
                                             id="descriptionEdit" name="descripcion"
                                             value={editedData.descripcion} onChange={handleChange}
                                             maxLength={200} rows={4}
                                             placeholder="Describe tu historia como héroe..."
+                                            className="w-full p-3 border-2 border-[#c4a484] rounded-md bg-black/20 text-white text-lg font-['MedievalSharp',_cursive] focus:border-yellow-400 focus:outline-none focus:ring-1 focus:ring-yellow-400/50"
                                         />
-                                        <div className="char-counter">{editedData.descripcion?.length || 0}/200</div>
+                                        <div className="text-right text-sm text-white/70 mt-1">{editedData.descripcion?.length || 0}/200</div>
                                     </div>
-                                    <div className="button-group">
-                                        <button className="save-button" onClick={handleSave} disabled={loading}>
+                                    <div className="flex justify-end gap-4 mt-2">
+                                        <button className="px-6 py-2.5 font-['Cinzel',_serif] text-lg font-bold rounded-md border-2 bg-yellow-400 text-black border-yellow-400 transition-all duration-300 hover:bg-[#593d1b] hover:text-yellow-400 disabled:opacity-50" onClick={handleSave} disabled={loading}>
                                             {loading ? 'Guardando...' : '💾 Guardar'}
                                         </button>
-                                        <button className="cancel-button" onClick={handleCancel} disabled={loading}>
+                                        <button className="px-6 py-2.5 font-['Cinzel',_serif] text-lg font-bold rounded-md border-2 bg-transparent border-[#c4a484] text-gray-200 transition-all duration-300 hover:bg-white/10 disabled:opacity-50" onClick={handleCancel} disabled={loading}>
                                             ❌ Cancelar
                                         </button>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="profile-info">
-                                    <div className="username-section">
-                                        <h3>{profileData.username || "Héroe Anónimo"}</h3>
-                                        <button className="edit-button" onClick={handleEdit} title="Editar perfil">✏️</button>
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center gap-3 justify-center md:justify-start">
+                                        <h3 className="m-0 font-['Cinzel',_serif] text-3xl sm:text-4xl text-white text-shadow-[1px_1px_3px_rgba(0,0,0,0.5)]">{profileData.username || "Héroe Anónimo"}</h3>
+                                        <button className="bg-none border-none p-0 cursor-pointer text-2xl transition-all duration-200 ease-in-out hover:scale-110 hover:drop-shadow-[0_0_5px_rgba(255,215,0,0.7)] focus:outline-none focus-visible:drop-shadow-[0_0_8px_#ffd700]" onClick={handleEdit} title="Editar perfil">✏️</button>
                                     </div>
-                                    <div className="description">
-                                        <p>{profileData.descripcion}</p>
+                                    <div className="bg-black/10 p-4 rounded-md border-l-2 border-yellow-400 min-h-[80px]">
+                                        <p className="m-0 italic text-gray-200 leading-relaxed">{profileData.descripcion}</p>
                                     </div>
-                                    {profileData.email && <div className="email-info">📧 {profileData.email}</div>}
+                                    {profileData.email && <div className="font-['Cinzel',_serif] text-white/80 text-lg">📧 {profileData.email}</div>}
                                     
-                                    {/* SECCIÓN DE ESTADÍSTICAS REORGANIZADA */}
-                                    <div className="stats">
+                                    <div className="flex justify-around items-start w-full mt-4 pt-4 border-t border-yellow-500/20">
                                         {statsData.map((stat) => (
-                                            <div className="stat" key={stat.label}>
-                                                <span className="stat-label">{stat.label}</span>
-                                                <span className="stat-value">{stat.value}</span>
+                                            <div className="flex flex-col items-center text-center basis-1/3" key={stat.label}>
+                                                <span className="text-sm font-bold text-white/70 uppercase tracking-wider mb-2">{stat.label}</span>
+                                                <span className="text-xl font-bold text-yellow-300 leading-tight">{stat.value}</span>
                                             </div>
                                         ))}
                                     </div>

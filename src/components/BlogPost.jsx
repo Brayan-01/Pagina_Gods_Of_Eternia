@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Comment from './Comment';
 import ConfirmationModal from '../pages/Blog/Confirmation/ConfirmationModal';
 import { io } from 'socket.io-client';
-import '../pages/Blog/Blog.css';
 
 const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNotification }) => {
     const [comments, setComments] = useState([]);
@@ -183,63 +182,63 @@ const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNot
                 message={modalState.message}
             />
 
-            <article className="blog-post">
-                <header className="post-header">
-                    <h1 className="post-title">{post.titulo}</h1>
-                    <div className="post-meta">
-                        <span className="post-author">
-                            Por {post.autor_username} {post.autor_verificado && <span className="verified-badge" title="Cuenta Verificada">✔</span>}
+            <article className="bg-gradient-to-b from-[rgba(10,5,2,0.7)] to-[rgba(20,10,5,0.75)] border border-[#4a3c2a] rounded-lg p-6 sm:p-8 md:p-12 w-full max-w-4xl my-5 flex flex-col relative shadow-[inset_0_0_20px_rgba(0,0,0,0.6),0_0_0_4px_#b8860b,0_10px_40px_rgba(0,0,0,0.7)]">
+                <header className="text-center mb-8 pb-6 relative border-b border-yellow-700/50 after:content-['⚜'] after:text-2xl after:text-yellow-600 after:absolute after:-bottom-4 after:left-1/2 after:-translate-x-1/2 after:bg-gray-800 after:px-2">
+                    <h1 className="font-['Cinzel',_serif] text-3xl md:text-5xl text-yellow-50 text-shadow-[0_0_15px_rgba(255,190,80,0.5),0_2px_2px_rgba(0,0,0,0.8)] mb-5 leading-tight font-bold">{post.titulo}</h1>
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 font-['Cormorant_Garamond',_serif] text-yellow-100/70 text-base md:text-lg italic">
+                        <span className="flex items-center">
+                            Por {post.autor_username} {post.autor_verificado && <span className="ml-2 text-green-400 text-sm" title="Cuenta Verificada">✔</span>}
                         </span>
-                        <span className="post-date">
+                        <span>
                             el {new Date(post.created_at).toLocaleDateString()}
                         </span>
                         {post.categoria_nombre && (
-                            <span className="post-category">{post.categoria_nombre}</span>
+                            <span className="bg-black/30 px-3 py-1 rounded-full border border-yellow-800/60 text-yellow-100">{post.categoria_nombre}</span>
                         )}
                     </div>
                 </header>
 
                 {post.imageUrl && (
-                    <div className="post-image-container">
-                        <img src={post.imageUrl} alt={post.titulo} className="post-image" onError={(e) => { e.target.onerror = null; e.target.src = defaultImagePlaceholder; }}/>
+                    <div className="w-full max-h-[500px] mb-8 rounded-md overflow-hidden border-4 border-[#3a2d1d] shadow-[inset_0_0_10px_rgba(0,0,0,0.7),0_4px_10px_rgba(0,0,0,0.5)]">
+                        <img src={post.imageUrl} alt={post.titulo} className="w-full h-full object-cover block filter sepia-20 contrast-110" onError={(e) => { e.target.onerror = null; e.target.src = defaultImagePlaceholder; }}/>
                     </div>
                 )}
 
-                <div className="post-content">
+                <div className="text-gray-200 text-base md:text-lg leading-loose whitespace-pre-wrap break-words hyphens-auto prose prose-invert max-w-none first-letter:font-['Cinzel',_serif] first-letter:text-5xl first-letter:text-yellow-500 first-letter:float-left first-letter:mr-2 first-letter:leading-none first-letter:text-shadow-[1px_1px_2px_rgba(0,0,0,0.5)]">
                     <p dangerouslySetInnerHTML={{ __html: post.content }} />
                 </div>
 
-                <div className="post-actions-bar">
-                    <div className="user-interactions">
+                <div className="flex justify-between items-center flex-wrap gap-4 py-5 mt-5 border-t-2 border-yellow-800/50">
+                    <div className="flex items-center flex-wrap gap-3">
                         <button
                             onClick={handleLike}
-                            className={`like-button ${userHasLiked ? 'liked' : ''}`}
+                            className={`inline-flex items-center gap-2 bg-black/30 border-2 border-[#c4a484] px-3 py-2 sm:px-4 rounded-full cursor-pointer font-['Cinzel',_serif] font-bold text-sm text-[#c4a484] transition-all duration-300 ease-in-out whitespace-nowrap hover:enabled:text-yellow-400 hover:enabled:border-yellow-400 hover:enabled:-translate-y-0.5 ${userHasLiked ? 'bg-yellow-400 text-stone-800 border-yellow-400 shadow-lg shadow-yellow-500/30' : ''}`}
                             disabled={isLiking || !currentUser || !isUserVerified}
                             title={userHasLiked ? "Quitar 'me gusta'" : "Me gusta"}
                         >
-                            <span className="like-icon">{userHasLiked ? '❤' : '🤍'}</span>
+                            <span className={`transition-transform duration-300 ${userHasLiked ? 'scale-125 text-red-500 animate-ping-once' : ''}`}>{userHasLiked ? '❤' : '🤍'}</span>
                             <span>{likeCount}</span>
                         </button>
-                        <div className="interaction-count" title="Número de comentarios">
-                            <span className="icon">💬</span>
+                        <div className="flex items-center gap-2 text-sm font-bold text-[#c4a484] whitespace-nowrap" title="Número de comentarios">
+                            <span className="text-lg">💬</span>
                             <span>{comments.length}</span>
                         </div>
                     </div>
                     {isPostOwner && (
-                        <div className="owner-actions">
-                            <button onClick={() => onEditClick(post.id)} className="action-button edit" title="Editar crónica">
+                        <div className="flex items-center flex-wrap gap-3">
+                            <button onClick={() => onEditClick(post.id)} className="inline-flex items-center gap-2 bg-transparent border-2 border-[#c4a484] px-3 py-1.5 rounded-md cursor-pointer transition-all duration-300 font-['Cinzel',_serif] text-sm font-semibold text-[#c4a484] whitespace-nowrap hover:enabled:scale-105 hover:enabled:bg-white/5 hover:enabled:text-sky-400 hover:enabled:border-sky-400" title="Editar crónica">
                                 <span>✏️</span><span>Editar</span>
                             </button>
-                            <button onClick={handleDeletePost} className="action-button delete" title="Eliminar crónica">
+                            <button onClick={handleDeletePost} className="inline-flex items-center gap-2 bg-transparent border-2 border-[#c4a484] px-3 py-1.5 rounded-md cursor-pointer transition-all duration-300 font-['Cinzel',_serif] text-sm font-semibold text-[#c4a484] whitespace-nowrap hover:enabled:scale-105 hover:enabled:bg-white/5 hover:enabled:text-red-500 hover:enabled:border-red-500" title="Eliminar crónica">
                                 <span>🗑️</span><span>Eliminar</span>
                             </button>
                         </div>
                     )}
                 </div>
 
-                <section className="comments-section">
-                    <h3>Comentarios</h3>
-                    <div className="comments-list">
+                <section className="border-t-2 border-yellow-800/30 pt-6 mt-6">
+                    <h3 className="text-yellow-500 font-['Cinzel',_serif] text-xl md:text-2xl mb-6">Comentarios</h3>
+                    <div className="mb-6">
                         {comments.length > 0 ? (
                             <AnimatePresence>
                                 {comments.map((comment) => (
@@ -254,27 +253,27 @@ const BlogPost = ({ post, currentUser, token, onDeletePost, onEditClick, showNot
                                 ))}
                             </AnimatePresence>
                         ) : (
-                            <p className="no-comments">Sé el primero en comentar esta crónica.</p>
+                            <p className="text-white/70 italic text-center p-5 bg-black/20 rounded-lg border border-dashed border-yellow-800/30 text-sm">Sé el primero en comentar esta crónica.</p>
                         )}
                     </div>
 
                     {currentUser && isUserVerified ? (
-                        <form onSubmit={handleAddComment} className="add-comment-form">
+                        <form onSubmit={handleAddComment} className="mt-6 p-4 sm:p-5 rounded-lg bg-black/20 border border-yellow-800/60 flex flex-col gap-4">
                             <textarea
                                 value={newComment}
                                 onChange={(e) => setNewComment(e.target.value)}
                                 placeholder="Añade tu verso a esta crónica..."
                                 rows="2"
-                                className="comment-textarea"
+                                className="flex-grow p-3 border-2 border-[#c4a484] rounded-lg bg-black/30 text-white text-sm sm:text-base font-['MedievalSharp',_cursive] resize-vertical min-h-[60px] transition-all duration-300 shadow-inner focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
                                 maxLength={500}
                             />
-                            <div className="comment-input-controls">
-                                <span className="character-count">{newComment.length}/500</span>
-                                <button type="submit" className="comment-submit-button" disabled={!newComment.trim()}>Enviar</button>
+                            <div className="flex justify-between items-center w-full flex-wrap gap-2">
+                                <span className="text-xs text-white/60 font-['Cinzel',_serif]">{newComment.length}/500</span>
+                                <button type="submit" className="bg-yellow-400 text-stone-800 border-2 border-yellow-400 px-5 py-2 sm:px-6 rounded-lg cursor-pointer transition-all duration-300 font-['Cinzel',_serif] font-bold uppercase text-xs sm:text-sm shadow-lg hover:enabled:bg-[#593d1b] hover:enabled:text-yellow-400 hover:enabled:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!newComment.trim()}>Enviar</button>
                             </div>
                         </form>
                     ) : (
-                        <p className={!currentUser ? "login-prompt" : "verification-warning"}>
+                        <p className="text-yellow-400 italic mt-4 text-sm text-center p-3 bg-yellow-500/10 rounded-md border border-yellow-500/30">
                             {!currentUser ? "Inicia sesión para poder comentar." : "Necesitas verificar tu correo para poder comentar."}
                         </p>
                     )}

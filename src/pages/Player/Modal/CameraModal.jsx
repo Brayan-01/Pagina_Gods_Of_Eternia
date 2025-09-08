@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './CameraModal.css';
 
 // Función de ayuda para convertir el DataURL de la imagen capturada a un objeto File
 const dataURLtoFile = (dataurl, filename) => {
@@ -294,12 +293,14 @@ const CameraModal = ({ show, onClose, onCapture }) => {
         return null;
     }
 
+    const modalButtonClasses = "flex-1 min-w-[120px] p-3 border-2 rounded-lg text-sm sm:text-base font-bold transition-all duration-300 uppercase tracking-wider relative overflow-hidden whitespace-nowrap before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:transition-all before:duration-500 hover:before:left-full disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none";
+
     return (
-        <div className="camera-modal-overlay" onClick={handleClose}>
-            <div className="camera-modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                    <h3>{capturedImage ? "Retrato Medieval" : "Cámara del Cronista"}</h3>
-                    <p className="medieval-subtitle">
+        <div className="fixed inset-0 bg-radial-gradient from-[rgba(0,0,0,0.7)] to-[rgba(0,0,0,0.9)] flex justify-center items-center z-[1001] backdrop-blur-sm animate-fade-in p-2.5" onClick={handleClose}>
+            <div className="bg-gradient-to-br from-[#2c1810] via-[#8b4513] to-[#654321] p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg shadow-yellow-500/30 text-center border-2 border-yellow-500 text-amber-50 w-full max-w-2xl max-h-[95vh] flex flex-col relative font-['Georgia',_serif] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="mb-4 sm:mb-6 flex-shrink-0">
+                    <h3 className="m-0 mb-2 text-xl sm:text-2xl md:text-3xl text-yellow-400 text-shadow-[2px_2px_4px_rgba(0,0,0,0.7)] font-bold tracking-wider leading-tight">{capturedImage ? "Retrato Medieval" : "Cámara del Cronista"}</h3>
+                    <p className="m-0 text-sm sm:text-base text-yellow-600 italic opacity-90 leading-tight px-1">
                         {capturedImage 
                             ? "Tu retrato ha sido bendecido con la esencia medieval" 
                             : isLoading 
@@ -310,29 +311,29 @@ const CameraModal = ({ show, onClose, onCapture }) => {
                 </div>
                 
                 {error ? (
-                    <div className="error-message">
+                    <div className="text-red-300 bg-red-900/50 border-2 border-red-500 p-4 sm:p-5 rounded-lg my-5 font-bold text-shadow-[1px_1px_2px_rgba(0,0,0,0.5)] text-sm sm:text-base leading-relaxed flex flex-col gap-4 text-left">
                         {error}
                         <button 
                             onClick={startCamera} 
-                            className="retry-button"
+                            className="self-center px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md cursor-pointer font-bold text-sm transition-all duration-300 disabled:opacity-60"
                             disabled={isLoading}
                         >
                             {isLoading ? "Intentando..." : "🔄 Reintentar"}
                         </button>
                     </div>
                 ) : (
-                    <div className="camera-view-wrapper">
+                    <div className="relative w-full aspect-video bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden mb-4 sm:mb-6 border-2 border-yellow-900 shadow-inner flex-shrink-0">
                         <video 
                             ref={videoRef} 
                             autoPlay 
                             playsInline 
                             muted
-                            className={`camera-video ${capturedImage ? 'hidden' : ''}`}
+                            className={`absolute inset-0 w-full h-full object-cover transform -scale-x-100 filter sepia-20 contrast-110 brightness-105 ${capturedImage ? 'hidden' : ''}`}
                         ></video>
                         
                         {(isLoading || (!isCameraReady && !capturedImage)) && (
-                            <div className="camera-loading-message">
-                                <div className="loading-spinner"></div>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 text-yellow-400 font-bold text-shadow-[2px_2px_4px_rgba(0,0,0,0.8)] p-5 bg-black/70 backdrop-blur-md">
+                                <div className="w-8 h-8 border-4 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin"></div>
                                 {isLoading ? "Iniciando cámara..." : "Cargando..."}
                             </div>
                         )}
@@ -341,51 +342,48 @@ const CameraModal = ({ show, onClose, onCapture }) => {
                             <img 
                                 src={capturedImage} 
                                 alt="Retrato Medieval" 
-                                className="medieval-preview"
+                                className="absolute inset-0 w-full h-full object-cover rounded-lg"
                             />
                         }
                         
-                        <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
-                        <canvas ref={previewCanvasRef} style={{ display: 'none' }}></canvas>
+                        <canvas ref={canvasRef} className="hidden"></canvas>
+                        <canvas ref={previewCanvasRef} className="hidden"></canvas>
                         
-                        {/* Overlay decorativo medieval cuando está capturando */}
                         {!capturedImage && isCameraReady && (
-                            <div className="medieval-overlay">
-                                <div className="corner-decoration top-left"></div>
-                                <div className="corner-decoration top-right"></div>
-                                <div className="corner-decoration bottom-left"></div>
-                                <div className="corner-decoration bottom-right"></div>
+                            <div className="absolute inset-0 pointer-events-none">
+                                <div className="absolute top-2.5 left-2.5 w-10 h-10 border-t-2 border-l-2 border-yellow-500/60 rounded-tl-lg"></div>
+                                <div className="absolute top-2.5 right-2.5 w-10 h-10 border-t-2 border-r-2 border-yellow-500/60 rounded-tr-lg"></div>
+                                <div className="absolute bottom-2.5 left-2.5 w-10 h-10 border-b-2 border-l-2 border-yellow-500/60 rounded-bl-lg"></div>
+                                <div className="absolute bottom-2.5 right-2.5 w-10 h-10 border-b-2 border-r-2 border-yellow-500/60 rounded-br-lg"></div>
                             </div>
                         )}
                     </div>
                 )}
 
-                <div className="modal-content-right">
-                    <div className="camera-modal-actions">
-                        {capturedImage ? (
-                            <>
-                                <button onClick={handleConfirm} className="modal-button confirm">
-                                    ⚔️ Usar este Retrato
-                                </button>
-                                <button onClick={handleRetake} className="modal-button retake">
-                                    🔄 Nuevo Retrato
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <button 
-                                    onClick={handleCapture} 
-                                    className="modal-button capture" 
-                                    disabled={!!error || !isCameraReady || isLoading}
-                                >
-                                    {isLoading ? "⏳ Cargando..." : "📸 Crear Retrato Medieval"}
-                                </button>
-                                <button onClick={handleClose} className="modal-button cancel">
-                                    ❌ Cancelar
-                                </button>
-                            </>
-                        )}
-                    </div>
+                <div className="flex justify-center gap-2 sm:gap-5 w-full flex-shrink-0 flex-col sm:flex-row">
+                    {capturedImage ? (
+                        <>
+                            <button onClick={handleConfirm} className={`${modalButtonClasses} border-green-500 text-green-400 hover:enabled:bg-green-500 hover:enabled:text-white hover:enabled:shadow-lg hover:enabled:shadow-green-500/50`}>
+                                ⚔️ Usar este Retrato
+                            </button>
+                            <button onClick={handleRetake} className={`${modalButtonClasses} border-orange-500 text-orange-400 hover:enabled:bg-orange-500 hover:enabled:text-white hover:enabled:shadow-lg hover:enabled:shadow-orange-500/50`}>
+                                🔄 Nuevo Retrato
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                onClick={handleCapture}
+                                className={`${modalButtonClasses} border-yellow-400 text-yellow-300 hover:enabled:bg-yellow-400 hover:enabled:text-black hover:enabled:shadow-lg hover:enabled:shadow-yellow-400/50`}
+                                disabled={!!error || !isCameraReady || isLoading}
+                            >
+                                {isLoading ? "⏳ Cargando..." : "📸 Crear Retrato Medieval"}
+                            </button>
+                            <button onClick={handleClose} className={`${modalButtonClasses} border-gray-500 text-gray-400 hover:enabled:bg-gray-500 hover:enabled:text-white`}>
+                                ❌ Cancelar
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

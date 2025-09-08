@@ -1,58 +1,68 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GameSetup from '../../pages/GameSetup/GameSetup'; // Asegúrate de que la ruta sea correcta
-import './GameSetupModal.css'; // ¡Importa los estilos del modal!
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 const GameSetupModal = () => {
     const navigate = useNavigate();
-    const modalRef = useRef();
+    const [isOpen, setIsOpen] = useState(true);
 
-    // Función para cerrar el modal
     const closeGameSetup = useCallback(() => {
-        // Agrega la clase de cierre para la animación
-        if (modalRef.current) {
-            modalRef.current.classList.add('game-setup-modal-closing');
-            modalRef.current.addEventListener('animationend', () => {
-                navigate('/player'); // O a la ruta que deba ir después de cerrar
-            }, { once: true }); // Asegura que el listener se ejecute una sola vez
-        } else {
+        setIsOpen(false);
+    }, []);
+
+    const handleAnimationComplete = () => {
+        if (!isOpen) {
             navigate('/player');
         }
-    }, [navigate]);
+    };
 
-    // Manejador para cerrar al hacer clic fuera del contenido
-    const handleOutsideClick = useCallback((event) => {
-        if (modalRef.current && !modalRef.current.contains(event.target)) {
-            closeGameSetup();
-        }
-    }, [closeGameSetup]);
-
-    // Efecto para añadir/limpiar listeners y la clase del body
+    // Efecto para la tecla Escape
     useEffect(() => {
-        document.body.classList.add('game-setup-modal-open');
-        document.addEventListener('mousedown', handleOutsideClick); // Clic fuera
-        document.addEventListener('keydown', (e) => { // Escape para cerrar
+        const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
                 closeGameSetup();
             }
-        });
-
-        return () => {
-            document.body.classList.remove('game-setup-modal-open');
-            document.removeEventListener('mousedown', handleOutsideClick);
-            // No necesitamos limpiar el keydown si el componente se desmonta
         };
-    }, [handleOutsideClick, closeGameSetup]);
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [closeGameSetup]);
 
     return (
-        <div className="game-setup-modal-overlay">
-            <div ref={modalRef} className="game-setup-modal-content">
-                <button className="game-setup-modal-close-button" onClick={closeGameSetup}>
-                    X
-                </button>
-                <GameSetup onClose={closeGameSetup} /> {/* Pasamos la función de cierre a GameSetup */}
-            </div>
-        </div>
+        <AnimatePresence onExitComplete={handleAnimationComplete}>
+            {isOpen && (
+                 <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="fixed inset-0 bg-black/70 flex justify-center items-center z-[1000] backdrop-blur-sm"
+                    onClick={closeGameSetup}
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="relative bg-transparent rounded-2xl max-w-[95%] max-h-[95vh] overflow-y-auto overflow-x-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            className="absolute top-4 right-6 bg-transparent border-none text-4xl leading-none text-gray-400 cursor-pointer transition-all duration-200 ease-in-out z-[1001] hover:text-white hover:scale-110"
+                            onClick={closeGameSetup}
+                            aria-label="Cerrar"
+                        >
+                            &times;
+                        </button>
+                        <GameSetup onClose={closeGameSetup} />
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 

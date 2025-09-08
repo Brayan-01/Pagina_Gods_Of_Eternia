@@ -4,9 +4,8 @@ import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "./loginpage.css";
 
-const Login = () => {
+const LoginPage = () => {
     useEffect(() => {
         document.title = 'Login | Gods Of Eternia';
     }, []);
@@ -193,48 +192,51 @@ const Login = () => {
         handleApiCall(apiFunction, onSuccess);
     };
 
+    const inputBaseClasses = "flex-1 w-full p-3.5 border-none bg-transparent text-white text-lg font-['Cinzel',_serif] outline-none placeholder-white/70";
+    const containerBaseClasses = "relative w-full flex items-center bg-white/10 border-2 border-[#c4a484] rounded-lg my-2.5 transition-all duration-300 ease-in-out focus-within:border-yellow-400 focus-within:shadow-[0_0_15px_rgba(255,215,0,0.8)]";
+
     return (
-        <div className="login-container">
+        <div className="flex justify-center items-center h-screen w-screen font-['MedievalSharp',_cursive] bg-[linear-gradient(rgba(0,0,0,0.6),_rgba(0,0,0,0.6)),url('/fondo_1.png')] bg-no-repeat bg-center bg-fixed cursor-[url('/assets/sword-cursor.png'),_auto]">
             <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="login-box"
+                className="bg-gradient-to-b from-[#9b7e20] to-[#774b1f] p-10 rounded-lg shadow-lg text-center w-[400px] border-2 border-[#c3c484] transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-yellow-300/50"
             >
-                <h2>Iniciar Sesión</h2>
-                {error && <p className="error-message">{error}</p>}
-                <form onSubmit={handleLogin} noValidate>
-                    <div className="password-container">
+                <h2 className="text-white text-2xl mb-5 text-shadow-[3px_3px_8px_rgba(0,0,0,0.5)]">Iniciar Sesión</h2>
+                {error && <p className="text-[#ff6b6b] bg-red-500/10 p-2.5 rounded-md my-2.5 text-center border border-red-500/30">{error}</p>}
+                <form onSubmit={handleLogin} noValidate className="flex flex-col items-center w-full gap-1">
+                    <div className={containerBaseClasses}>
                         <input
                             type="email"
                             placeholder="Correo"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="password-input"
+                            className={inputBaseClasses}
                             required
                         />
-                        <span className="eye-button" style={{ visibility: 'hidden' }}>
+                        <span className="px-4 text-xl text-white cursor-pointer invisible">
                             <FaEye />
                         </span>
                     </div>
-                    <div className="password-container">
+                    <div className={containerBaseClasses}>
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder="Contraseña"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="password-input"
+                            className={inputBaseClasses}
                             required
                         />
-                        <span className="eye-button" onClick={() => setShowPassword(!showPassword)}>
+                        <span className="px-4 text-xl text-white cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </span>
                     </div>
-                    <button type="submit" disabled={isLoginLoading}>
+                    <button type="submit" disabled={isLoginLoading} className="w-full mt-2.5 bg-[#593d1b] text-white border-none p-3.5 rounded-md cursor-pointer text-lg uppercase font-['Cinzel',_serif] transition-all duration-300 hover:bg-yellow-400 hover:text-[#593d1b] hover:scale-105 hover:shadow-[0_0_15px_rgba(255,215,0,0.8)] disabled:opacity-60 disabled:cursor-not-allowed">
                         {isLoginLoading ? "Ingresando..." : "Iniciar Sesión"}
                     </button>
                 </form>
-                <div className="forgot-password" onClick={openForgotPasswordModal}>
+                <div className="mt-2.5 text-sm text-white/70 cursor-pointer transition-colors duration-300 hover:text-yellow-400" onClick={openForgotPasswordModal}>
                     ¿Olvidaste tu contraseña?
                 </div>
             </motion.div>
@@ -245,7 +247,7 @@ const Login = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="modal-overlay"
+                        className="fixed top-0 left-0 w-screen h-screen bg-black/80 flex justify-center items-center z-50 cursor-pointer"
                         onClick={closeForgotPasswordModal}
                     >
                         <motion.div
@@ -253,81 +255,81 @@ const Login = () => {
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.8, opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="modal-content"
+                            className="bg-gradient-to-b from-[#9b7e20] to-[#774b1f] border-2 border-[#c4a484] rounded-lg shadow-lg w-[90%] max-w-md cursor-default font-['MedievalSharp',_cursive] sm:w-full"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="modal-header">
-                                <h3>Recuperar Contraseña</h3>
-                                <FaTimes className="close-button" onClick={closeForgotPasswordModal} />
+                            <div className="flex justify-between items-center p-5 border-b-2 border-[#c4a484]/30">
+                                <h3 className="text-white text-xl font-['Cinzel',_serif] text-shadow-[2px_2px_6px_rgba(0,0,0,0.5)] m-0">Recuperar Contraseña</h3>
+                                <FaTimes className="text-white/70 text-xl cursor-pointer transition-colors duration-300 hover:text-yellow-400 hover:scale-110 p-1" onClick={closeForgotPasswordModal} />
                             </div>
-                            <div className="modal-body">
-                                {resetMessage && <p className="success-message">{resetMessage}</p>}
-                                {resetError && <p className="error-message">{resetError}</p>}
+                            <div className="p-6">
+                                {resetMessage && <p className="p-2.5 rounded-md my-2.5 text-center border border-teal-400/30 bg-teal-500/10 text-teal-200">{resetMessage}</p>}
+                                {resetError && <p className="text-[#ff6b6b] bg-red-500/10 p-2.5 rounded-md my-2.5 text-center border border-red-500/30">{resetError}</p>}
                                 
                                 {resetStep === 'enterEmail' ? (
-                                    <form onSubmit={handleRequestCode} noValidate>
-                                        <p>Ingresa tu correo y te enviaremos un código para restablecer tu contraseña.</p>
-                                        <div className="password-container">
+                                    <form onSubmit={handleRequestCode} noValidate className="flex flex-col gap-0">
+                                        <p className="text-white/90 mb-5 leading-relaxed text-center">Ingresa tu correo y te enviaremos un código para restablecer tu contraseña.</p>
+                                        <div className={containerBaseClasses}>
                                             <input
                                                 type="email"
                                                 placeholder="Correo electrónico"
                                                 value={resetEmail}
                                                 onChange={(e) => setResetEmail(e.target.value)}
-                                                className="password-input"
+                                                className={inputBaseClasses}
                                                 required
                                                 disabled={isResetLoading}
                                             />
                                         </div>
-                                        <div className="modal-buttons">
-                                            <button type="submit" className="submit-button" disabled={isResetLoading}>
+                                        <div className="flex gap-4 justify-center mt-5">
+                                            <button type="submit" className="flex-1 py-3 px-5 rounded-md cursor-pointer text-base font-['Cinzel',_serif] uppercase transition-all duration-300 bg-[#593d1b] text-white border-2 border-[#593d1b] hover:enabled:bg-yellow-400 hover:enabled:text-[#593d1b] hover:enabled:border-yellow-400 hover:enabled:-translate-y-0.5 hover:enabled:shadow-[0_4px_15px_rgba(255,215,0,0.4)] disabled:opacity-60 disabled:cursor-not-allowed" disabled={isResetLoading}>
                                                 {isResetLoading ? "Enviando..." : "Enviar Código"}
                                             </button>
                                         </div>
                                     </form>
                                 ) : (
-                                    <form onSubmit={handleResetWithCode}>
-                                        <p>Ingresa el código que recibiste y tu nueva contraseña.</p>
-                                        <div className="password-container">
+                                    <form onSubmit={handleResetWithCode} className="flex flex-col gap-0">
+                                        <p className="text-white/90 mb-5 leading-relaxed text-center">Ingresa el código que recibiste y tu nueva contraseña.</p>
+                                        <div className={containerBaseClasses}>
                                             <input
                                                 type="text"
                                                 placeholder="Código de verificación"
                                                 value={resetCode}
                                                 onChange={(e) => setResetCode(e.target.value)}
-                                                className="password-input"
+                                                className={inputBaseClasses}
                                                 required
                                                 disabled={isResetLoading}
                                             />
                                         </div>
-                                        <div className="password-container">
+                                        <div className={containerBaseClasses}>
                                             <input
                                                 type={showNewPassword ? "text" : "password"}
                                                 placeholder="Nueva contraseña"
                                                 value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
-                                                className="password-input"
+                                                className={inputBaseClasses}
                                                 required
                                                 disabled={isResetLoading}
                                             />
-                                            <span className="eye-button" onClick={() => setShowNewPassword(!showNewPassword)}>
+                                            <span className="px-4 text-xl text-white cursor-pointer" onClick={() => setShowNewPassword(!showNewPassword)}>
                                                 {showNewPassword ? <FaEyeSlash /> : <FaEye />}
                                             </span>
                                         </div>
-                                        <div className="password-container">
+                                        <div className={containerBaseClasses}>
                                             <input
                                                 type={showConfirmPassword ? "text" : "password"}
                                                 placeholder="Confirmar nueva contraseña"
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                                className="password-input"
+                                                className={inputBaseClasses}
                                                 required
                                                 disabled={isResetLoading}
                                             />
-                                            <span className="eye-button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                            <span className="px-4 text-xl text-white cursor-pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                                             </span>
                                         </div>
-                                        <div className="modal-buttons">
-                                            <button type="submit" className="submit-button" disabled={isResetLoading}>
+                                        <div className="flex gap-4 justify-center mt-5">
+                                            <button type="submit" className="flex-1 py-3 px-5 rounded-md cursor-pointer text-base font-['Cinzel',_serif] uppercase transition-all duration-300 bg-[#593d1b] text-white border-2 border-[#593d1b] hover:enabled:bg-yellow-400 hover:enabled:text-[#593d1b] hover:enabled:border-yellow-400 hover:enabled:-translate-y-0.5 hover:enabled:shadow-[0_4px_15px_rgba(255,215,0,0.4)] disabled:opacity-60 disabled:cursor-not-allowed" disabled={isResetLoading}>
                                                 {isResetLoading ? "Actualizando..." : "Restablecer Contraseña"}
                                             </button>
                                         </div>
@@ -342,4 +344,4 @@ const Login = () => {
     );
 }
 
-export default Login;
+export default LoginPage;

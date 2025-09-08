@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPython, FaJs, FaPhp } from 'react-icons/fa';
 import { Shield, Swords, Crown, Sparkles, Zap, Star } from 'lucide-react';
-import './GameSetup.css';
 
 // --- Datos de subtemas ampliados ---
 const subtemasPorDificultad = {
@@ -137,9 +136,9 @@ const GameSetup = () => {
 
     // Efecto para gestionar la clase del body y evitar doble scroll
     useEffect(() => {
-        document.body.classList.add('game-setup-active');
+        document.body.classList.add('overflow-hidden');
         return () => {
-            document.body.classList.remove('game-setup-active');
+            document.body.classList.remove('overflow-hidden');
         };
     }, []);
 
@@ -203,9 +202,9 @@ const GameSetup = () => {
     };
 
     return (
-        <div className="game-setup-container">
+        <div className="flex flex-col items-center justify-start min-h-screen p-8 pt-28 text-center bg-[radial-gradient(ellipse_at_top,rgba(139,69,19,0.3)_0%,transparent_50%),radial-gradient(ellipse_at_bottom,rgba(43,29,15,0.4)_0%,transparent_50%),linear-gradient(135deg,#1a1a1a_0%,#2d1810_100%)] relative">
             <motion.h1
-                className="main-title"
+                className="font-['Uncial_Antiqua',_cursive] text-6xl text-amber-400 [text-shadow:0_0_10px_rgba(255,191,0,0.6),_2px_2px_4px_rgba(0,0,0,0.8),_4px_4px_8px_rgba(0,0,0,0.5)] mb-8 tracking-widest animate-pulse-glow z-10"
                 variants={titleVariants}
                 initial="hidden"
                 animate="visible"
@@ -234,25 +233,24 @@ const GameSetup = () => {
 
             <AnimatePresence mode="wait">
                 {step === 1 && (
-                    <motion.div key="step1" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="setup-section">
-                        <motion.h2 className="section-title" variants={itemVariants}>
+                    <motion.div key="step1" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="w-full max-w-5xl flex flex-col items-center z-20">
+                        <motion.h2 className="font-['Cinzel',_serif] text-4xl font-semibold text-amber-400 [text-shadow:2px_2px_4px_rgba(0,0,0,0.8)] mb-10 relative inline-block after:content-[''] after:absolute after:-bottom-2.5 after:left-1/2 after:-translate-x-1/2 after:w-3/5 after:h-1 after:bg-gradient-to-r after:from-transparent after:via-amber-400 after:to-transparent after:animate-underline-glow" variants={itemVariants}>
                             <Star className="inline mr-3" size={35} />
                             Elige tu Gremio de Magia
                             <Star className="inline ml-3" size={35} />
                         </motion.h2>
-                        <div className="options-grid">
-                            {languageOptions.map((opt, index) => (
+                        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-10 w-full mb-8">
+                            {languageOptions.map((opt) => (
                                 <motion.button
                                     key={opt.id}
                                     variants={itemVariants}
                                     whileHover="hover"
                                     whileTap="tap"
                                     onClick={() => handleSelectLanguage(opt.id)}
-                                    className="option-card language-card group"
-                                    style={{ animationDelay: `${index * 0.1}s` }}
+                                    className="relative bg-gradient-to-br from-[rgba(43,29,15,0.9)] to-[rgba(139,69,19,0.7)] border-2 border-amber-700 rounded-2xl p-8 flex flex-col items-center justify-center text-amber-50 font-['Cinzel',_serif] font-semibold cursor-pointer transition-all duration-300 ease-in-out shadow-lg hover:border-amber-400 hover:text-amber-400 overflow-hidden group"
                                 >
                                     <motion.div variants={cardHoverVariants} className="flex flex-col items-center gap-4">
-                                        {opt.icon}
+                                        <div className="transition-all duration-300 ease-in-out group-hover:scale-125 group-hover:drop-shadow-lg">{opt.icon}</div>
                                         <span className="font-bold text-xl">{opt.name}</span>
                                         <span className="text-sm opacity-80">{opt.description}</span>
                                     </motion.div>
@@ -263,7 +261,7 @@ const GameSetup = () => {
                 )}
 
                 {step === 2 && (
-                    <motion.div key="step2" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="setup-section">
+                    <motion.div key="step2" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="w-full max-w-5xl flex flex-col items-center z-20">
                         <motion.div className="flex items-center justify-center mb-6" variants={itemVariants}>
                             {getSelectedLanguageIcon()}
                             <Zap className="mx-4" size={30} />
@@ -271,41 +269,37 @@ const GameSetup = () => {
                                 {languageOptions.find(opt => opt.id === language)?.name}
                             </span>
                         </motion.div>
-                        <motion.h2 className="section-title" variants={itemVariants}>
+                        <motion.h2 className="font-['Cinzel',_serif] text-4xl font-semibold text-amber-400 [text-shadow:2px_2px_4px_rgba(0,0,0,0.8)] mb-10 relative inline-block after:content-[''] after:absolute after:-bottom-2.5 after:left-1/2 after:-translate-x-1/2 after:w-3/5 after:h-1 after:bg-gradient-to-r after:from-transparent after:via-amber-400 after:to-transparent after:animate-underline-glow" variants={itemVariants}>
                             <Swords className="inline mr-3" size={35} />
                             Selecciona tu Rango
                             <Swords className="inline ml-3" size={35} />
                         </motion.h2>
-                        <div className="options-grid">
-                            {difficultyOptions.map((opt, index) => (
+                        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-10 w-full mb-8">
+                            {difficultyOptions.map((opt) => (
                                 <motion.button
                                     key={opt.id}
                                     variants={itemVariants}
                                     whileHover="hover"
                                     whileTap="tap"
                                     onClick={() => handleSelectDifficulty(opt.id)}
-                                    className="option-card group"
-                                    style={{
-                                        animationDelay: `${index * 0.1}s`,
-                                        '--hover-color': opt.color
-                                    }}
+                                    className="relative bg-gradient-to-br from-[rgba(43,29,15,0.9)] to-[rgba(139,69,19,0.7)] border-2 border-amber-700 rounded-2xl p-8 flex flex-col items-center justify-center text-amber-50 font-['Cinzel',_serif] font-semibold cursor-pointer transition-all duration-300 ease-in-out shadow-lg hover:border-amber-400 hover:text-amber-400 overflow-hidden group"
                                 >
                                     <motion.div variants={cardHoverVariants} className="flex flex-col items-center gap-4">
-                                        {opt.icon}
+                                        <div className="transition-all duration-300 ease-in-out group-hover:scale-125 group-hover:drop-shadow-lg">{opt.icon}</div>
                                         <span className="font-bold text-xl">{opt.name}</span>
                                         <span className="text-sm opacity-80">{opt.description}</span>
                                     </motion.div>
                                 </motion.button>
                             ))}
                         </div>
-                        <motion.button onClick={() => handleGoBack(1)} className="back-button mt-4" variants={itemVariants} whileHover={{ x: -5 }}>
+                        <motion.button onClick={() => handleGoBack(1)} className="bg-transparent border-2 border-transparent text-amber-700 text-lg font-['Cinzel',_serif] cursor-pointer p-3 rounded-full transition-all duration-300 hover:text-amber-50 hover:border-amber-800 hover:bg-amber-800/20" variants={itemVariants} whileHover={{ x: -5 }}>
                             ← Cambiar Gremio
                         </motion.button>
                     </motion.div>
                 )}
 
                 {step === 3 && (
-                    <motion.div key="step3" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="setup-section">
+                    <motion.div key="step3" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="w-full max-w-3xl flex flex-col items-center z-20">
                         <motion.div className="flex items-center justify-center mb-6 space-x-4" variants={itemVariants}>
                             {getSelectedLanguageIcon()}
                             <Zap size={25} />
@@ -314,33 +308,33 @@ const GameSetup = () => {
                                 {languageOptions.find(opt => opt.id === language)?.name} - {difficultyOptions.find(opt => opt.id === difficulty)?.name}
                             </span>
                         </motion.div>
-                        <motion.h2 className="section-title" variants={itemVariants}>
+                        <motion.h2 className="font-['Cinzel',_serif] text-4xl font-semibold text-amber-400 [text-shadow:2px_2px_4px_rgba(0,0,0,0.8)] mb-10 relative inline-block after:content-[''] after:absolute after:-bottom-2.5 after:left-1/2 after:-translate-x-1/2 after:w-3/5 after:h-1 after:bg-gradient-to-r after:from-transparent after:via-amber-400 after:to-transparent after:animate-underline-glow" variants={itemVariants}>
                             <Crown className="inline mr-3" size={35} />
                             ¿Qué Hechizo Dominarás?
                             <Crown className="inline ml-3" size={35} />
                         </motion.h2>
-                        <motion.div className="subtopic-grid" variants={containerVariants}>
-                            {availableSubtopics.map((tema, index) => (
+                        <motion.div className="grid grid-cols-1 gap-4 w-full max-w-2xl mb-10 max-h-[40vh] overflow-y-auto px-4" variants={containerVariants}>
+                            {availableSubtopics.map((tema) => (
                                 <motion.button
                                     key={tema}
                                     variants={itemVariants}
                                     whileHover={{ scale: 1.02, x: 10, transition: { type: "spring", stiffness: 300 } }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => handleSelectSubtopic(tema)}
-                                    className={`subtopic-card ${subtopic === tema ? 'selected' : ''}`}
-                                    style={{ animationDelay: `${index * 0.05}s` }}
+                                    className={`relative bg-gradient-to-r from-black/40 to-amber-900/60 border-2 border-amber-800 p-5 rounded-lg text-amber-50 font-['MedievalSharp',_cursive] text-lg cursor-pointer text-center transition-all duration-300 ease-in-out backdrop-blur-sm overflow-hidden hover:bg-gradient-to-r hover:from-amber-800 hover:to-amber-600 hover:text-amber-300 hover:border-amber-400 ${subtopic === tema ? 'bg-gradient-to-r from-amber-400 to-amber-600 !text-black !border-amber-50 font-bold shadow-lg' : ''}`}
                                 >
                                     {tema}
+                                    {subtopic === tema && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl animate-bounce">⚔️</span>}
                                 </motion.button>
                             ))}
                         </motion.div>
-                        <motion.div className="navigation-buttons" variants={itemVariants}>
-                            <motion.button onClick={() => handleGoBack(2)} className="back-button" whileHover={{ x: -5 }} whileTap={{ scale: 0.95 }}>
+                        <motion.div className="flex justify-between items-center w-full max-w-2xl mt-8 flex-col-reverse sm:flex-row gap-6" variants={itemVariants}>
+                            <motion.button onClick={() => handleGoBack(2)} className="bg-transparent border-2 border-transparent text-amber-700 text-lg font-['Cinzel',_serif] cursor-pointer p-3 rounded-full transition-all duration-300 hover:text-amber-50 hover:border-amber-800 hover:bg-amber-800/20" whileHover={{ x: -5 }} whileTap={{ scale: 0.95 }}>
                                 ← Cambiar Rango
                             </motion.button>
                             <motion.button
                                 onClick={handleStartGame}
-                                className="start-game-button"
+                                className="relative bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-400 border-2 border-amber-50 text-white px-12 py-6 text-2xl font-bold font-['Cinzel',_serif] rounded-full cursor-pointer shadow-lg transition-all duration-300 uppercase tracking-widest overflow-hidden disabled:bg-gray-600 disabled:border-gray-500 disabled:cursor-not-allowed disabled:opacity-60"
                                 disabled={!subtopic}
                                 whileHover={subtopic ? {
                                     scale: 1.05,
