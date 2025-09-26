@@ -15,10 +15,7 @@ import BlogPage from './pages/Blog/BlogPage';
 import About from './pages/About/about';
 import Player from './pages/Player/Player';
 import GuiaJuego from "./pages/guiaJuego/guia_juego.jsx";
-
-
-// ¡NUEVA IMPORTACIÓN!
-import GameSetupModal from './components/GameSetupModal/GameSetupModal'; // ¡Importa el nuevo componente Modal!
+import GameSetupModal from './components/GameSetupModal/GameSetupModal'; 
 
 const App = () => {
   return (

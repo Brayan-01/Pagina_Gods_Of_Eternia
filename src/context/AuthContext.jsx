@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import Loader from '../components/Loader/Loader';
 
 const AuthContext = createContext(null);
 
@@ -121,7 +122,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={value}>
-            {!isInitializing ? children : <div>Cargando...</div>}
+            {!isInitializing ? children : <Loader />}
         </AuthContext.Provider>
     );
 };

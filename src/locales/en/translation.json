@@ -10,7 +10,7 @@
         "blog_button": "Go to Blog"
       },
     "header": {
-        "home": "Home",
+        "home": " Home",
         "about": "About",
         "login": "Login",
         "register": "Sign Up",
@@ -165,9 +165,9 @@
             "php": "PHP"
           },
           "language_descriptions": {
-            "python": "The language of the wise serpent",
-            "javascript": "The spell of the browser",
-            "php": "The magic of the server"
+            "python": " The language of the wise serpent",
+            "javascript": " The spell of the browser",
+            "php": " The magic of the server"
           },
           "difficulties": {
             "facil": "Apprentice",
@@ -175,9 +175,9 @@
             "dificil": "Master"
           },
           "difficulty_descriptions": {
-            "facil": "For new adventurers",
-            "medio": "For experienced braves",
-            "dificil": "Only for the boldest"
+            "facil": " For new adventurers",
+            "medio": " For experienced braves",
+            "dificil": " Only for the boldest"
           },
           "subtopics": {
             "python_facil": ["Variables and Data Types", "Basic Operators", "Lists", "Simple Conditionals", "Input/Output"],
@@ -388,8 +388,5 @@
                 "connection_failed": "Connection error. Please try again later."
               }
             }
-          },
-          "common": {
-            "loading": "Loading..."
           }
   }

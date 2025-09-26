@@ -6,18 +6,18 @@ import './GameSetup.css';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import slugify from "slugify"; 
-import { useTranslation } from 'react-i18next'; // Importar hook
+import { useTranslation } from 'react-i18next';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// --- Animaciones ---
+// --- Animaciones (Estas no cambian) ---
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.1 } }, exit: { opacity: 0, transition: { duration: 0.3 } }};
 const itemVariants = { hidden: { opacity: 0, y: 30, scale: 0.9 }, visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 100, damping: 15 } }};
 const cardHoverVariants = { hover: { scale: 1.05, y: -10, transition: { type: "spring", stiffness: 300, damping: 20 } }, tap: { scale: 0.95 }};
 const titleVariants = { hidden: { opacity: 0, y: -50 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15, duration: 0.8 } }};
 
 const GameSetup = () => {
-    const { t } = useTranslation(); // Inicializar hook
+    const { t } = useTranslation();
     const { profile, loading: isLoadingAuth, token } = useAuth();
     const navigate = useNavigate();
 
@@ -30,7 +30,6 @@ const GameSetup = () => {
     const [hasCourse, setHasCourse] = useState(false);
     const [loadingCourse, setLoadingCourse] = useState(true);
 
-    // --- Opciones y subtemas ahora se construyen con las traducciones ---
     const languageOptions = useMemo(() => [
         { id: 'python', name: t('game_setup.languages.python'), icon: <FaPython size={30} />, description: t('game_setup.language_descriptions.python') },
         { id: 'javascript', name: t('game_setup.languages.javascript'), icon: <FaJs size={50} />, description: t('game_setup.language_descriptions.javascript') },
@@ -71,7 +70,6 @@ const GameSetup = () => {
 
     useEffect(() => {
         if (language && difficulty) {
-            // Obtenemos los subtemas del archivo de traducción
             const subtopicsKey = `game_setup.subtopics.${language}_${difficulty}`;
             setAvailableSubtopics(t(subtopicsKey, { returnObjects: true }));
             setSubtopic('');
@@ -98,6 +96,7 @@ const GameSetup = () => {
         setSubtopic(topic);
     };
 
+    // --- CÓDIGO CORREGIDO Y SIMPLIFICADO ---
     const handleStartGame = async () => {
         if (!language || !difficulty || !subtopic) {
             alert(t('game_setup.alerts.complete_preparation'));
@@ -109,31 +108,44 @@ const GameSetup = () => {
         }
         playSound('start_game');
         setIsLoading(true);
+        
+        // Prepara el payload para TU backend principal
         const payload = {
-            nombre_usuario: profile?.username || profile?.email || "anonimo",
-            foto_perfil: profile?.profileImage || "",
             tema: language,
             dificultad: difficulty,
             curso: slugify(subtopic, { lower: true, strict: true })
         };
+    
         try {
-            const response = await fetch(`${API_URL}/auth_juego/start-game-session`, {
+            // Llama ÚNICAMENTE a tu backend principal
+            console.log("Iniciando sesión de juego y pidiendo datos a la IA a través del backend...");
+            const sessionResponse = await fetch(`${API_URL}/auth_juego/start-game-session`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${token}` 
+                },
                 body: JSON.stringify(payload)
             });
-            const data = await response.json().catch(() => response.text());
-            if (response.ok) {
-                window.location.href = '/Juego/index.html';
-            } else {
-                alert(t('game_setup.alerts.start_game_error_generic', { error: JSON.stringify(data) }));
-                setIsLoading(false);
+    
+            // Verifica que tu backend haya completado la tarea
+            const sessionData = await sessionResponse.json();
+            if (!sessionResponse.ok) {
+                // Este error ahora vendrá de tu backend principal
+                throw new Error(`Error al iniciar sesión: ${JSON.stringify(sessionData.detail || sessionData.message)}`);
             }
+            
+            console.log("Backend ha confirmado la creación de la sesión y guardado de archivos.");
+    
+            // Como el backend ya guardó todo, simplemente redirige al juego.
+            window.location.href = '/Juego/index.html';
+    
         } catch (error) {
-            alert(t('game_setup.alerts.connection_error'));
+            alert(t('game_setup.alerts.start_game_error_generic', { error: error.message }));
             setIsLoading(false);
         }
     };
+    // --- FIN DEL CÓDIGO CORREGIDO ---
 
     const handleGoBack = (targetStep) => {
         playSound('back');
@@ -211,12 +223,8 @@ const GameSetup = () => {
                     <motion.div key="step2" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="setup-section">
                         <motion.div className="flex items-center justify-center mb-6" variants={itemVariants}>
                             <div className="flex flex-col items-center gap-2">
-                                <div className="mb-2">
-                                    {getSelectedLanguageIcon()}
-                                </div>
-                                <span className="text-xl font-bold text-yellow-400">
-                                    {languageOptions.find(opt => opt.id === language)?.name}
-                                </span>
+                                <div className="mb-2">{getSelectedLanguageIcon()}</div>
+                                <span className="text-xl font-bold text-yellow-400">{languageOptions.find(opt => opt.id === language)?.name}</span>
                             </div>
                         </motion.div>
                         <motion.h2 className="section-title" variants={itemVariants}>
@@ -225,15 +233,15 @@ const GameSetup = () => {
                             <Swords className="inline ml-3" size={35} />
                         </motion.h2>
                         <div className="options-grid">
-                             {difficultyOptions.map((opt, index) => (
-                                <motion.button key={opt.id} variants={itemVariants} whileHover="hover" whileTap="tap" onClick={() => handleSelectDifficulty(opt.id)} className="option-card group" style={{ animationDelay: `${index * 0.1}s`, '--hover-color': opt.color }}>
-                                    <motion.div variants={cardHoverVariants} className="flex flex-col items-center">
-                                        <div className="mb-4">{opt.icon}</div>
-                                        <span className="font-bold text-xl mb-2">{opt.name}</span>
-                                        <span className="text-sm opacity-80 text-center">{opt.description}</span>
-                                    </motion.div>
-                                </motion.button>
-                            ))}
+                                {difficultyOptions.map((opt, index) => (
+                                    <motion.button key={opt.id} variants={itemVariants} whileHover="hover" whileTap="tap" onClick={() => handleSelectDifficulty(opt.id)} className="option-card group" style={{ animationDelay: `${index * 0.1}s`, '--hover-color': opt.color }}>
+                                        <motion.div variants={cardHoverVariants} className="flex flex-col items-center">
+                                            <div className="mb-4">{opt.icon}</div>
+                                            <span className="font-bold text-xl mb-2">{opt.name}</span>
+                                            <span className="text-sm opacity-80 text-center">{opt.description}</span>
+                                        </motion.div>
+                                    </motion.button>
+                                ))}
                         </div>
                         <motion.button onClick={() => handleGoBack(1)} className="back-button mt-4" variants={itemVariants} whileHover={{ x: -5 }}>
                             {t('game_setup.change_guild_button')}
@@ -244,21 +252,13 @@ const GameSetup = () => {
                      <motion.div key="step3" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="setup-section">
                         <motion.div className="flex items-center justify-center mb-6 space-x-6" variants={itemVariants}>
                             <div className="flex flex-col items-center gap-2">
-                                <div className="mb-1">
-                                    {getSelectedLanguageIcon()}
-                                </div>
-                                <span className="text-sm font-semibold text-yellow-400">
-                                    {languageOptions.find(opt => opt.id === language)?.name}
-                                </span>
+                                <div className="mb-1">{getSelectedLanguageIcon()}</div>
+                                <span className="text-sm font-semibold text-yellow-400">{languageOptions.find(opt => opt.id === language)?.name}</span>
                             </div>
                             <Zap size={30} className="text-yellow-400" />
                             <div className="flex flex-col items-center gap-2">
-                                <div className="mb-1">
-                                    {getSelectedDifficultyIcon()}
-                                </div>
-                                <span className="text-sm font-semibold text-yellow-400">
-                                    {difficultyOptions.find(opt => opt.id === difficulty)?.name}
-                                </span>
+                                <div className="mb-1">{getSelectedDifficultyIcon()}</div>
+                                <span className="text-sm font-semibold text-yellow-400">{difficultyOptions.find(opt => opt.id === difficulty)?.name}</span>
                             </div>
                         </motion.div>
                         <motion.h2 className="section-title" variants={itemVariants}>
@@ -300,13 +300,13 @@ const GameSetup = () => {
                                 {t('game_setup.loading_battlefield')}
                             </motion.p>
                              <motion.div
-                                 className="w-64 h-2 bg-gray-700 rounded-full mt-6 overflow-hidden"
+                                  className="w-64 h-2 bg-gray-700 rounded-full mt-6 overflow-hidden"
                             >
                                  <motion.div
-                                     className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
-                                     initial={{ width: "0%" }}
-                                     animate={{ width: "100%" }}
-                                     transition={{ duration: 1.8, ease: "easeInOut" }}
+                                      className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
+                                      initial={{ width: "0%" }}
+                                      animate={{ width: "100%" }}
+                                      transition={{ duration: 1.8, ease: "easeInOut" }}
                                  />
                              </motion.div>
                         </motion.div>
