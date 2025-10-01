@@ -14,8 +14,8 @@ import Verification from './pages/Verification/Verification';
 import BlogPage from './pages/Blog/BlogPage';
 import About from './pages/About/about';
 import Player from './pages/Player/Player';
-import GuiaJuego from "./pages/guiaJuego/guia_juego.jsx";
 import GameSetupModal from './components/GameSetupModal/GameSetupModal'; 
+import NotFound from './pages/Construction/Construction';
 
 const App = () => {
   return (
@@ -24,7 +24,8 @@ const App = () => {
       <Routes>
         {/* --- Rutas Públicas --- */}
         <Route path="/" element={<Home />} />
-        <Route path="/guia" element={< GuiaJuego />} />
+        
+        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verificar" element={<Verification />} />
@@ -33,9 +34,12 @@ const App = () => {
 
         {/* --- Rutas Protegidas --- */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/player" element={<Player />} />        
+          <Route path="/player" element={<Player />} />      
           <Route path="/juego" element={<GameSetupModal />} />
         </Route>
+
+        {/* --- Ruta para 404 --- */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>
   );

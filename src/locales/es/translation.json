@@ -387,5 +387,10 @@
                 "connection_failed": "Error de conexión. Inténtalo de nuevo más tarde."
               }
             }
-          }
+          },
+            "notFound": {
+              "subtitle": "¡En Construcción!",
+              "message": "Los maestros constructores trabajan día y noche para erigir esta sección del reino. Las torres aún se levantan y los cimientos se fortalecen. Pronto este lugar estará listo para recibir a los valientes aventureros.",
+              "button": "Volver al Santuario"
+            }
   }

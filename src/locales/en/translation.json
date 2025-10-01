@@ -388,5 +388,10 @@
                 "connection_failed": "Connection error. Please try again later."
               }
             }
+          },
+          "notFound": {
+            "subtitle": "Under Construction!",
+            "message": "The master builders work day and night to erect this section of the kingdom. The towers are still rising and the foundations are being strengthened. Soon this place will be ready to welcome brave adventurers.",
+            "button": "Return to the Sanctuary"
           }
   }

@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next'; // Importar hook
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom'; // <-- 1. IMPORTA EL COMPONENTE LINK
 
 function Footer() {
-    const { t } = useTranslation(); // Inicializar hook
+    const { t } = useTranslation();
     const API_URL = import.meta.env.VITE_API_URL;
     const currentYear = new Date().getFullYear();
 
@@ -11,27 +12,29 @@ function Footer() {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    // Usamos useMemo para construir el array con las traducciones.
-    // Esto evita que se reconstruya en cada renderizado.
     const footerSections = useMemo(() => [
         {
             title: t('footer.useful_links_title'),
             links: [
                 { text: t('footer.support_link'), action: 'openSupport' },
+                // Este enlace a /guia está bien como Link
                 { text: t('footer.game_guide_link'), url: '/guia' },
             ],
         },
         {
             title: t('footer.legal_title'),
             links: [
-                { text: t('footer.terms_of_service_link'), url: `${API_URL}/pdfs/Terminos y Condiciones de Gods Of Eternia.pdf`, isPdf: true },
-                { text: t('footer.privacy_policy_link'), url: `${API_URL}/pdfs/Política de Privacidad de Gods of Eternia.pdf`, isPdf: true },
+                // --- 2. AQUÍ ESTÁ EL CAMBIO ---
+                // Cambiamos las URLs externas por rutas internas que no existen
+                { text: t('footer.terms_of_service_link'), url: '/terminos-y-condiciones' },
+                { text: t('footer.privacy_policy_link'), url: '/politica-de-privacidad' },
             ],
         },
-    ], [t, API_URL]);
+    ], [t]); // Quitamos API_URL de las dependencias porque ya no se usa aquí
 
+    // ... (El resto de tu código, como handleInputChange, handleSubmit, etc., se mantiene igual)
     const handleLinkClick = (link, e) => {
-        if (link.url) return;
+        if (link.url) return; // Permitir que los <Link> y <a> con url funcionen
         e.preventDefault();
         if (link.action === 'openSupport') {
             setIsModalOpen(true);
@@ -80,6 +83,7 @@ function Footer() {
         setFormData({ nombre: '', correo: '', motivo: '' });
     };
 
+
     return (
         <div>
             <footer className="footer">
@@ -90,14 +94,20 @@ function Footer() {
                             <ul className="footer__links-list">
                                 {section.links.map((link) => (
                                     <li key={link.text}>
-                                        <a
-                                            className="footer__link"
-                                            href={link.url || '#'}
-                                            onClick={(e) => handleLinkClick(link, e)}
-                                            {...(link.isPdf ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                                        >
-                                            {link.text}
-                                        </a>
+                                        {/* --- 3. LÓGICA PARA USAR <Link> O <a> --- */}
+                                        {link.url ? (
+                                            <Link to={link.url} className="footer__link">
+                                                {link.text}
+                                            </Link>
+                                        ) : (
+                                            <a
+                                                className="footer__link"
+                                                href="#"
+                                                onClick={(e) => handleLinkClick(link, e)}
+                                            >
+                                                {link.text}
+                                            </a>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -109,45 +119,46 @@ function Footer() {
                 </div>
             </footer>
 
+            {/* El código del modal se queda exactamente igual */}
             {isModalOpen && (
-                <div className="modal-overlay" onClick={closeModal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        {showSuccessMessage ? (
-                            <div className="support-success">
-                                <span className="success-icon">&#10004;</span>
-                                <h3>{t('footer.support_modal.success_title')}</h3>
-                                <p dangerouslySetInnerHTML={{ __html: t('footer.support_modal.success_message', { name: formData.nombre }) }} />
-                            </div>
-                        ) : (
-                            <>
-                                <div className="modal-header">
-                                    <h2 className="modal-title">{t('footer.support_modal.title')}</h2>
-                                    <button className="modal-close" onClick={closeModal}>×</button>
-                                </div>
-                                <div className="support-form">
-                                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                                    <div className="form-group">
-                                        <label htmlFor="nombre" className="form-label">{t('footer.support_modal.name_label')}</label>
-                                        <input type="text" id="nombre" name="nombre" className="form-input" value={formData.nombre} onChange={handleInputChange} required />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="correo" className="form-label">{t('footer.support_modal.email_label')}</label>
-                                        <input type="email" id="correo" name="correo" className="form-input" value={formData.correo} onChange={handleInputChange} required />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="motivo" className="form-label">{t('footer.support_modal.reason_label')}</label>
-                                        <textarea id="motivo" name="motivo" className="form-textarea" rows="4" value={formData.motivo} onChange={handleInputChange} placeholder={t('footer.support_modal.reason_placeholder')} required></textarea>
-                                    </div>
-                                    <div className="form-actions">
-                                        <button type="button" className="btn btn--secondary" onClick={closeModal}>{t('footer.support_modal.cancel_button')}</button>
-                                        <button type="button" className="btn btn--primary" onClick={handleSubmit}>{t('footer.support_modal.send_button')}</button>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-            )}
+                 <div className="modal-overlay" onClick={closeModal}>
+                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                         {showSuccessMessage ? (
+                             <div className="support-success">
+                                 <span className="success-icon">&#10004;</span>
+                                 <h3>{t('footer.support_modal.success_title')}</h3>
+                                 <p dangerouslySetInnerHTML={{ __html: t('footer.support_modal.success_message', { name: formData.nombre }) }} />
+                             </div>
+                         ) : (
+                             <>
+                                 <div className="modal-header">
+                                     <h2 className="modal-title">{t('footer.support_modal.title')}</h2>
+                                     <button className="modal-close" onClick={closeModal}>×</button>
+                                 </div>
+                                 <div className="support-form">
+                                     {errorMessage && <p className="error-message">{errorMessage}</p>}
+                                     <div className="form-group">
+                                         <label htmlFor="nombre" className="form-label">{t('footer.support_modal.name_label')}</label>
+                                         <input type="text" id="nombre" name="nombre" className="form-input" value={formData.nombre} onChange={handleInputChange} required />
+                                     </div>
+                                     <div className="form-group">
+                                         <label htmlFor="correo" className="form-label">{t('footer.support_modal.email_label')}</label>
+                                         <input type="email" id="correo" name="correo" className="form-input" value={formData.correo} onChange={handleInputChange} required />
+                                     </div>
+                                     <div className="form-group">
+                                         <label htmlFor="motivo" className="form-label">{t('footer.support_modal.reason_label')}</label>
+                                         <textarea id="motivo" name="motivo" className="form-textarea" rows="4" value={formData.motivo} onChange={handleInputChange} placeholder={t('footer.support_modal.reason_placeholder')} required></textarea>
+                                     </div>
+                                     <div className="form-actions">
+                                         <button type="button" className="btn btn--secondary" onClick={closeModal}>{t('footer.support_modal.cancel_button')}</button>
+                                         <button type="button" className="btn btn--primary" onClick={handleSubmit}>{t('footer.support_modal.send_button')}</button>
+                                     </div>
+                                 </div>
+                             </>
+                         )}
+                     </div>
+                 </div>
+             )}
         </div>
     );
 }
